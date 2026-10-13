@@ -1,16 +1,12 @@
+import type { IsNegative } from "../_internal";
 import type { UnPrefix, Stringify } from "../string";
 import type { ToNumber } from "./utils";
 
 type Abs<T extends string | number> =
 	UnPrefix<Stringify<T>, "-"> extends infer R extends string ? (T extends string ? R : ToNumber<R>) : never;
 
-type StartsWith<T extends string, P extends string> = T extends `${P}${string}` ? true : false;
 
-type IsNegative<T extends string | number> = T extends T
-	? StartsWith<Stringify<T>, "-"> extends true
-		? true
-		: false
-	: never;
+
 
 type IncrementMap = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
