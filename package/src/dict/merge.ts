@@ -80,11 +80,11 @@ type _MergeIntPreserve<A extends Dict, B extends Dict> = {
 
 /**
  * Merge two objects by keeping all keys from `A` that `B` lacks.
- * 
+ *
  * @example
  * type A = { readonly a: 1, b: 2 };
  * type B = { a: "<>", c: 4 };
- * 
+ *
  * type AB = MergeDiff<A, B>; // { b: 2 }
  * type BA = MergeDiff<B, A>; // { c: 4 }
  */
@@ -100,11 +100,11 @@ type _MergeDiff<A extends Dict, B extends Dict> = {
 
 /**
  * Merge two objects by keeping all non-shared keys from both `A` and `B`.
- * 
+ *
  * @example
  * type A = { readonly a: 1, b: 2 };
  * type B = { a: "<>", c: 4 };
- * 
+ *
  * type AB = MergeSymDiff<A, B>; // { b: 2, c: 4 }
  * type BA = AB;
  */
@@ -122,7 +122,7 @@ type _MergeSymDiff<A extends Dict, B extends Dict> = {
 
 /**
  * Merge two objects using the given method.
- * 
+ *
  * @see {@linkcode MergeUnion}, {@linkcode MergePatch}, {@linkcode MergeInt}, {@linkcode MergeDiff} and {@linkcode MergeSymDiff}
  */
 export type Merge<

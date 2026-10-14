@@ -32,7 +32,11 @@ export type OgValueof<T extends Dict> = T extends T ? T[keyof T] : never;
  * type R1 = OgKeyof<Config>; // keyof Config
  * type R2 = Keyof<Config>; // 'foo' | 'bar'
  */
-export type Keyof<T extends Dict> = T extends T ? Known<T> extends infer T extends Dict ? keyof T : never : never;
+export type Keyof<T extends Dict> = T extends T
+	? Known<T> extends infer T extends Dict
+		? keyof T
+		: never
+	: never;
 
 /**
  * Similar to {@linkcode OgValueof}, except it returns all known keys' values instead of all possible values when `T` contains `{ [x: string]: unknown }`.
@@ -43,23 +47,29 @@ export type Keyof<T extends Dict> = T extends T ? Known<T> extends infer T exten
  * type R1 = OgValueof<Config>; // unknown
  * type R2 = Valueof<Config>; // string | number
  */
-export type Valueof<T extends Dict | ROList> =
-T extends T ? Known<T> extends infer T extends Dict ? T[keyof T] : never : never;
+export type Valueof<T extends Dict | ROList> = T extends T
+	? Known<T> extends infer T extends Dict
+		? T[keyof T]
+		: never
+	: never;
 
 /**
  * Returns `[OgKeyof<T>, OgValueof<T>]`.
- * 
+ *
  * @see {@linkcode OgKeyof} and {@linkcode OgValueof}
  */
 export type OgEntryOf<T extends Dict> = T extends T ? [keyof T, T[keyof T]] : never;
 
 /**
  * Returns `[Keyof<T>, Valueof<T>]`.
- * 
+ *
  * @see {@linkcode Keyof} and {@linkcode Valueof}
  */
-export type EntryOf<T extends Dict> =
-	T extends T ? Known<T> extends infer T extends Dict ? [keyof T, T[keyof T]] : never : never;
+export type EntryOf<T extends Dict> = T extends T
+	? Known<T> extends infer T extends Dict
+		? [keyof T, T[keyof T]]
+		: never
+	: never;
 
 /**
  * A deep version of {@linkcode Keyof}.
@@ -87,7 +97,7 @@ type _KeyofDeep<
 
 /**
  * A version of {@linkcode Keyof} that returns only keys with values of type `U`.
- * 
+ *
  * @example
  * type R1 = KeyofType<{ a: 1, b: "b", c: 4 }, number>; // "a" | "c"
  */

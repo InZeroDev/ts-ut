@@ -5,7 +5,7 @@ import type { Dict } from "./utils";
 
 /**
  * An alias for `Obj['Key']`.
- * 
+ *
  * @example
  * type R1 = Get<{ a: 1, b: 2 }, 'a'>; // 1
  */
@@ -17,7 +17,7 @@ export type Get<T extends Dict, K extends Keyof<T>> = T extends T
 
 /**
  * Get a deeply nested value using dot-notation.
- * 
+ *
  * @example
  * type R1 = GetDeep<{ a: { b: { c: 1 } } }, 'a.b.c'>; // 1
  */

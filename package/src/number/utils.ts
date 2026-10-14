@@ -1,6 +1,6 @@
 /**
  * Converts a number in string form to its number representation.
- * 
+ *
  * @example
  * type R1 = ToNumber<"123">; // 123
  */

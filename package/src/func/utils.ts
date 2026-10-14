@@ -14,7 +14,7 @@ export type Func<A extends ROList = any[], R = any> = (...args: A) => R;
 
 /**
  * An alias for `T | Func<A, T>`.
- * 
+ *
  * @see {@linkcode Func}
  */
 export type OrFunc<T, A extends ROList = []> = T | Func<A, T>;
@@ -31,7 +31,7 @@ export type Params<F extends Func> = Parameters<F>;
 
 /**
  * Gets the parameter at the given index. Negative indices are supported.
- * 
+ *
  * @example
  * type Fn = (a: string, b: number) => void;
  * type R1 = Param<Fn, 0>; // string

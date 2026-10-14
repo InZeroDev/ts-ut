@@ -14,11 +14,11 @@ export type Dict<K extends DictKey = string, V = unknown> = Record<K, V>;
 
 /**
  * Removes `[x: string]: unknown` from an object.
- * 
+ *
  * @example
  * type Config = { foo: string, bar: boolean, [x: string]: string };
  * type KnownConfig = Known<Config>; // { foo: string, bar: boolean }
- * 
+ *
  * // Can also be used on tuples to get the guaranteed elements
  * type R = Known<[string, number?, ...number[]]>; // [string]
  */
@@ -28,10 +28,9 @@ export type Known<T extends Dict | ROList> = T extends T
 		: { [P in keyof T as HasType<DictKey, P> extends true ? never : P]: T[P] }
 	: never;
 
-
 /**
  * Prettifies an object.
- * 
+ *
  * @example
  * type R1 = Readonly<{ a: 1 } | { b: 2 }>; // Readonly<{ a: 1 }> | Readonly<{ b: 2 }>
  * type R2 = Prettify<R1>; // { readonly a: 1 } | { readonly b: 2 }
