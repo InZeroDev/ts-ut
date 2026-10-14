@@ -3,12 +3,24 @@ import type { IsNever } from "../other";
 import type { Keyof, KeyofDeep } from "./keyof";
 import type { Dict } from "./utils";
 
+/**
+ * An alias for `Obj['Key']`.
+ * 
+ * @example
+ * type R1 = Get<{ a: 1, b: 2 }, 'a'>; // 1
+ */
 export type Get<T extends Dict, K extends Keyof<T>> = T extends T
 	? K extends keyof T
 		? T[K]
 		: never
 	: never;
 
+/**
+ * Get a deeply nested value using dot-notation.
+ * 
+ * @example
+ * type R1 = GetDeep<{ a: { b: { c: 1 } } }, 'a.b.c'>; // 1
+ */
 export type GetDeep<T extends Dict | ROList, K extends KeyofDeep<T>> = T extends T
 	? K extends K
 		? Next<K> extends [infer N extends string, infer R]
