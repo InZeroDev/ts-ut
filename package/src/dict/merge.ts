@@ -67,7 +67,15 @@ type _MergeSymDiff<A extends Dict, B extends Dict> = {
 export type Merge<
 	A extends Dict,
 	B extends Dict,
-	M extends "patch" | "patch-preserve" | "union" | "union-preserve" | "int" | "int-preserve" | "diff" | "symDiff",
+	M extends
+		| "patch"
+		| "patch-preserve"
+		| "union"
+		| "union-preserve"
+		| "int"
+		| "int-preserve"
+		| "diff"
+		| "symDiff",
 > = M extends "union"
 	? MergeUnion<A, B>
 	: M extends "union-preserve"

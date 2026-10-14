@@ -6,6 +6,8 @@ export type IsNegative<T extends string | number> = T extends T
 		: false
 	: never;
 
-export type StartsWith<T extends string, P extends string> = T extends `${P}${string}` ? true : false;
+export type StartsWith<T extends string, P extends string> = T extends `${P}${string}`
+	? true
+	: false;
 
 export type As<T, U> = Extract<U, T>;

@@ -1,26 +1,26 @@
 {
-  // Visit https://aka.ms/tsconfig to read more about this file
-  "compilerOptions": {
-    // File Layout
-    "rootDir": "./",
-    "outDir": "./dist",
+	// Visit https://aka.ms/tsconfig to read more about this file
+	"compilerOptions": {
+		// File Layout
+		"rootDir": "./",
+		"outDir": "./dist",
 
-    // Environment Settings
-    // See also https://aka.ms/tsconfig/module
-    "module": "preserve",
-    "target": "es2024",
+		// Environment Settings
+		// See also https://aka.ms/tsconfig/module
+		"module": "preserve",
+		"target": "es2024",
 
-    // Other Outputs
-    "declaration": true,
-    "emitDeclarationOnly": true,
+		// Other Outputs
+		"declaration": true,
+		"emitDeclarationOnly": true,
 
-    // Recommended Options
-    "strict": true,
-    "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true,
-  }
+		// Recommended Options
+		"strict": true,
+		"jsx": "react-jsx",
+		"verbatimModuleSyntax": true,
+		"isolatedModules": true,
+		"noUncheckedSideEffectImports": true,
+		"moduleDetection": "force",
+		"skipLibCheck": true
+	}
 }

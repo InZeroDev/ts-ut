@@ -15,17 +15,25 @@ export type Push<T extends ROList, E, S extends boolean = false> = [
 	: never;
 
 export type Pop<T extends ROList, N extends number = 1> =
-	Required<T> extends readonly [...infer Head extends ROList, ...Tuple<N>] ? MatchTuple<Head, T> : [];
+	Required<T> extends readonly [...infer Head extends ROList, ...Tuple<N>]
+		? MatchTuple<Head, T>
+		: [];
 
 export type Unshift<T extends ROList, E, S extends boolean = false> = [
 	...(IsSubtype<S, true> | IsSubtype<E, ROList> extends true ? As<ROList, E> : [E]),
 	...Required<T>,
 ] extends infer Result extends ROList
-	? MatchTuple<Result, T, IsSubtype<S, true> | IsTuple<E> extends true ? As<ROList, E>["length"] : 1>
+	? MatchTuple<
+			Result,
+			T,
+			IsSubtype<S, true> | IsTuple<E> extends true ? As<ROList, E>["length"] : 1
+		>
 	: never;
 
 export type Shift<T extends ROList, N extends number = 1> =
-	Required<T> extends readonly [...Tuple<N>, ...infer Rest extends ROList] ? MatchTuple<Rest, T, NegAbs<N>> : [];
+	Required<T> extends readonly [...Tuple<N>, ...infer Rest extends ROList]
+		? MatchTuple<Rest, T, NegAbs<N>>
+		: [];
 
 // ---Internal---
 
@@ -40,13 +48,19 @@ type FOE<T extends ROList, _C extends List = []> =
 
 type SetFOE<T extends ROList, I extends number> = _SetFOE<T, NormalizeIndex<I, T["length"]>>;
 
-type _SetFOE<T extends ROList, I extends number, _I extends List = []> = T extends readonly [infer F, ...infer R]
+type _SetFOE<T extends ROList, I extends number, _I extends List = []> = T extends readonly [
+	infer F,
+	...infer R,
+]
 	? I extends _I["length"]
 		? [F?, ...Partial<R>]
 		: [F, ..._SetFOE<R, I, [..._I, any]>]
 	: T;
 
-type MatchTuple<T extends ROList, R extends ROList, D extends number = 0> = MatchRO<MatchFOI<T, R, D>, R>;
+type MatchTuple<T extends ROList, R extends ROList, D extends number = 0> = MatchRO<
+	MatchFOI<T, R, D>,
+	R
+>;
 
 type MatchFOI<T extends ROList, R extends ROList, D extends number = 0> =
 	FOE<R> extends -1

@@ -3,7 +3,11 @@ import type { IsNever } from "../other";
 import type { Keyof, KeyofDeep } from "./keyof";
 import type { Dict } from "./utils";
 
-export type Get<T extends Dict, K extends Keyof<T>> = T extends T ? (K extends keyof T ? T[K] : never) : never;
+export type Get<T extends Dict, K extends Keyof<T>> = T extends T
+	? K extends keyof T
+		? T[K]
+		: never
+	: never;
 
 export type GetDeep<T extends Dict | ROList, K extends KeyofDeep<T>> = T extends T
 	? K extends K
@@ -27,4 +31,6 @@ type _GetDeep<T extends Dict | ROList, N extends string, R> = {
 	: never;
 
 // ---Internal---
-type Next<K extends string> = K extends `${infer N extends string}.${infer R extends string}` ? [N, R] : [K, never];
+type Next<K extends string> = K extends `${infer N extends string}.${infer R extends string}`
+	? [N, R]
+	: [K, never];

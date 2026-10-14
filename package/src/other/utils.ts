@@ -14,7 +14,9 @@ export type SmartExtract<T, U> = T extends T
 
 // ---Internal---
 
-type IsPrimitive<T> = IsAny<T> | IsUnknown<T> | IsNever<T> extends false ? _IsPrimitive<_Wrap<T>> : false;
+type IsPrimitive<T> = IsAny<T> | IsUnknown<T> | IsNever<T> extends false
+	? _IsPrimitive<_Wrap<T>>
+	: false;
 
 type _IsPrimitive<T> = T extends T
 	? AreEqual<T, [string]> | AreEqual<T, [number]> | AreEqual<T, [boolean]> extends false

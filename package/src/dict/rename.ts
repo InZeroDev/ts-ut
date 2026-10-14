@@ -7,7 +7,6 @@ export type RenameKey<T extends Dict, K extends Keyof<T>, N extends DictKey> = T
 		}
 	: never;
 
-
 export type RenameKeys<T extends Dict, M extends Record<Keyof<T>, DictKey>> = T extends T
 	? M extends M
 		? {

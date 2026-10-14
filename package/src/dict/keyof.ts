@@ -7,17 +7,24 @@ export type OgValueof<T extends Dict> = T extends T ? T[keyof T] : never;
 
 export type Keyof<T extends Dict> = Known<T> extends infer T extends Dict ? keyof T : never;
 
-export type Valueof<T extends Dict | ROList> = Known<T> extends infer T extends Dict ? T[keyof T] : never;
+export type Valueof<T extends Dict | ROList> =
+	Known<T> extends infer T extends Dict ? T[keyof T] : never;
 
 export type OgEntryOf<T extends Dict> = T extends T ? [keyof T, T[keyof T]] : never;
 
-export type EntryOf<T extends Dict> = Known<T> extends infer T extends Dict ? [keyof T, T[keyof T]] : never;
+export type EntryOf<T extends Dict> =
+	Known<T> extends infer T extends Dict ? [keyof T, T[keyof T]] : never;
 
-export type KeyofDeep<T extends Dict | ROList, R extends "leaf" | "parent" | "both" = "both"> = T extends T
-	? _KeyofDeep<T, R>
-	: never;
+export type KeyofDeep<
+	T extends Dict | ROList,
+	R extends "leaf" | "parent" | "both" = "both",
+> = T extends T ? _KeyofDeep<T, R> : never;
 
-type _KeyofDeep<T extends Dict | ROList, R extends "leaf" | "parent" | "both" = "both", _K extends string = ""> = {
+type _KeyofDeep<
+	T extends Dict | ROList,
+	R extends "leaf" | "parent" | "both" = "both",
+	_K extends string = "",
+> = {
 	[P in keyof T]: T[P] extends infer TK
 		? NextKey<P & string, _K> extends infer N extends string
 			? TK extends Dict | ROList

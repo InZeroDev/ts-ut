@@ -3,10 +3,11 @@ import type { UnPrefix, Stringify } from "../string";
 import type { ToNumber } from "./utils";
 
 type Abs<T extends string | number> =
-	UnPrefix<Stringify<T>, "-"> extends infer R extends string ? (T extends string ? R : ToNumber<R>) : never;
-
-
-
+	UnPrefix<Stringify<T>, "-"> extends infer R extends string
+		? T extends string
+			? R
+			: ToNumber<R>
+		: never;
 
 type IncrementMap = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
@@ -128,7 +129,6 @@ type _Decrement<T extends string, C extends string> = C extends "0"
 			? _Decrement<DecrementByOne<T>, DecrementByOne<C>>
 			: never;
 
-
 export type Increment<N extends number, C extends number = 1> = (
 	IsNegative<C> extends true
 		? _Decrement<Stringify<N>, Abs<Stringify<C>>>
@@ -136,7 +136,6 @@ export type Increment<N extends number, C extends number = 1> = (
 ) extends infer R extends string
 	? ToNumber<R>
 	: never;
-
 
 export type Decrement<N extends number, C extends number = 1> = (
 	IsNegative<C> extends true
