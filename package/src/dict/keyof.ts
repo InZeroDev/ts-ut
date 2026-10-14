@@ -32,7 +32,7 @@ export type OgValueof<T extends Dict> = T extends T ? T[keyof T] : never;
  * type R1 = OgKeyof<Config>; // keyof Config
  * type R2 = Keyof<Config>; // 'foo' | 'bar'
  */
-export type Keyof<T extends Dict> = Known<T> extends infer T extends Dict ? keyof T : never;
+export type Keyof<T extends Dict> = T extends T ? Known<T> extends infer T extends Dict ? keyof T : never : never;
 
 /**
  * Similar to {@linkcode OgValueof}, except it returns all known keys' values instead of all possible values when `T` contains `{ [x: string]: unknown }`.
@@ -44,7 +44,7 @@ export type Keyof<T extends Dict> = Known<T> extends infer T extends Dict ? keyo
  * type R2 = Valueof<Config>; // string | number
  */
 export type Valueof<T extends Dict | ROList> =
-	Known<T> extends infer T extends Dict ? T[keyof T] : never;
+T extends T ? Known<T> extends infer T extends Dict ? T[keyof T] : never : never;
 
 /**
  * Returns `[OgKeyof<T>, OgValueof<T>]`.
@@ -59,7 +59,7 @@ export type OgEntryOf<T extends Dict> = T extends T ? [keyof T, T[keyof T]] : ne
  * @see {@linkcode Keyof} and {@linkcode Valueof}
  */
 export type EntryOf<T extends Dict> =
-	Known<T> extends infer T extends Dict ? [keyof T, T[keyof T]] : never;
+	T extends T ? Known<T> extends infer T extends Dict ? [keyof T, T[keyof T]] : never : never;
 
 /**
  * A deep version of {@linkcode Keyof}.
