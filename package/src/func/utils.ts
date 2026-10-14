@@ -10,7 +10,7 @@ import type { NormalizeIndex } from "../tuple/utils";
  * type F3 = Func<[], string>; // () => string
  * type F4 = Func<[name: string], string>; // (name: string) => string
  */
-export type Func<A extends ROList = [], R = any> = (...args: A) => R;
+export type Func<A extends ROList = any[], R = any> = (...args: A) => R;
 
 /**
  * An alias for `T | Func<A, T>`.
