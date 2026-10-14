@@ -19,10 +19,10 @@ export type RenameKey<T extends Dict, K extends Keyof<T>, N extends DictKey> = T
  * @example
  * type R1 = RenameKeys<{f: string, b: string, c: 4}, {f: "foo", b: "bar"}>; // { foo: string, bar: string, c: 4 }
  */
-export type RenameKeys<T extends Dict, M extends Record<Keyof<T>, DictKey>> = T extends T
+export type RenameKeys<T extends Dict, M extends Partial<Dict<Keyof<T>, DictKey>>> = T extends T
 	? M extends M
 		? {
-				[P in keyof T as P extends keyof M ? M[P] : P]: T[P];
+				[P in keyof T as P extends keyof M ? M[P] & DictKey : P]: T[P];
 			}
 		: never
 	: never;
