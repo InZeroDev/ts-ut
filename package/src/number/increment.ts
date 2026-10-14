@@ -11,6 +11,9 @@ type Abs<T extends string | number> =
 
 type IncrementMap = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
+/**
+ * A type that represents the digits 0 through 9.
+ */
 export type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
 type IncrementSpecialCases = {
@@ -129,6 +132,16 @@ type _Decrement<T extends string, C extends string> = C extends "0"
 			? _Decrement<DecrementByOne<T>, DecrementByOne<C>>
 			: never;
 
+/**
+ * Increments a number by a given amount.
+ *
+ * @example
+ * type R1 = Increment<1>; // 2
+ * type R2 = Increment<1, 2>; // 3
+ * type R3 = Increment<1, -1>; // 0
+ * type R4 = Increment<-1, 1>; // 0
+ * type R5 = Increment<-1, -1>; // -2
+ */
 export type Increment<N extends number, C extends number = 1> = (
 	IsNegative<C> extends true
 		? _Decrement<Stringify<N>, Abs<Stringify<C>>>
@@ -137,6 +150,16 @@ export type Increment<N extends number, C extends number = 1> = (
 	? ToNumber<R>
 	: never;
 
+/**
+ * Decrements a number by a given amount.
+ *
+ * @example
+ * type R1 = Decrement<1>; // 0
+ * type R2 = Decrement<1, 2>; // -1
+ * type R3 = Decrement<1, -1>; // 2
+ * type R4 = Decrement<-1, 1>; // -2
+ * type R5 = Decrement<-1, -1>; // 0
+ */
 export type Decrement<N extends number, C extends number = 1> = (
 	IsNegative<C> extends true
 		? _Increment<Stringify<N>, Abs<Stringify<C>>>
