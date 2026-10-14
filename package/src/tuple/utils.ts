@@ -2,7 +2,7 @@ import type { IsNegative } from "../_internal";
 import type { List, ROList } from "../list";
 import type { Decrement, Increment } from "../number";
 
-export type Tuple<L extends number = -1, T = unknown> = L extends L ? _Tuple<L, T> : never;
+export type Tuple<L extends number, T = unknown> = L extends L ? _Tuple<L, T> : never;
 
 type _Tuple<L extends number, T, _L extends List = []> = _L["length"] extends L
 	? []
