@@ -46,23 +46,9 @@ export type NonEmptyROTuple<T = unknown, L extends number = 1> = [
  */
 export type KeyofTuple<T extends readonly unknown[]> = Exclude<keyof T, keyof any[]>;
 
-export type NormalizeIndex<I extends number, L extends number | ROList> = (
-	L extends ROList ? L["length"] : L
-) extends infer Length extends number
-	? IsNegative<I> extends false
-		? IsNegative<Decrement<I, Length>> extends false
-			? Decrement<Length>
-			: I
-		: Increment<Length, I> extends infer Result extends number
-			? IsNegative<Result> extends true
-				? 0
-				: Result
-			: never
-	: never;
-
 /**
  * Returns the guaranteed elements of a tuple.
- * 
+ *
  * @example
  * type R1 = KnownTuple<[number, number, ...number[]]>; // [number, number]
  */

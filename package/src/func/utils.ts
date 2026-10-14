@@ -1,5 +1,5 @@
 import type { ROList } from "../list";
-import type { NormalizeIndex } from "../tuple/utils";
+import type { NormalizeIndex } from "../_internal";
 
 /**
  * Creates a function type with the given arguments and return type.

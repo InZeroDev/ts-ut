@@ -1,11 +1,10 @@
-import type { As } from "../_internal";
+import type { As, NormalizeIndex } from "../_internal";
 import type { Mutable } from "../dict";
 import type { List, ROList } from "../list";
 import type { Increment, ToNumber } from "../number";
 import type { IsSubtype } from "../other";
 import type { EnsurePrefix, Stringify } from "../string";
-import type { NormalizeIndex, Tuple } from "./utils";
-import type { IsTuple } from "./validation";
+import type { Tuple } from "./utils";
 
 /**
  * Pushes an element to the end of a tuple.
@@ -102,3 +101,9 @@ type MatchFOI<T extends ROList, R extends ROList, D extends number = 0> =
 type MatchRO<T extends ROList, R extends ROList> = Readonly<R> extends R ? Readonly<T> : Mutable<T>;
 
 type BetterRequired<T> = T extends T ? Required<T> : never;
+
+type IsTuple<T> = T extends T
+	? Required<T> extends readonly [] | readonly [unknown, ...unknown[]]
+		? true
+		: false
+	: never;
