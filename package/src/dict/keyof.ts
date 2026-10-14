@@ -2,35 +2,12 @@ import type { ROList } from "../list";
 import type { Dict, Known } from "./utils";
 
 /**
- * Similar to `keyof Obj`, except it returns all possible keys instead of shared keys when `T` is a union of objects.
+ * Similar to `keyof Obj`, except it returns all possible keys when `T` is a union and only known keys when `T` has `[x: string]: unknown` keys.
  *
  * @example
- * type MyObj = { a: 1 } | { b: 2 };
+ * type Config = { foo: string, bar: number, [x: string]: unknown } | { c: 4 };
  *
- * type R1 = OgKeyof<MyObj>; // "a" | "b"
- * type R2 = keyof MyObj; // never
- */
-export type OgKeyof<T extends Dict> = T extends T ? keyof T : never;
-
-/**
- * Similar to `Obj[keyof Obj]`, except it returns all possible values instead of shared keys' values when `T` is a union of objects.
- *
- * @example
- * type MyObj = { a: 1 } | { b: 2 };
- *
- * type R1 = OgValueof<MyObj>; // 1 | 2
- * type R2 = Obj[keyof Obj]; // never
- */
-export type OgValueof<T extends Dict> = T extends T ? T[keyof T] : never;
-
-/**
- * Similar to {@linkcode OgKeyof}, except it returns all known keys instead of `string` when `T` contains `{ [x: string]: unknown }`.
- *
- * @example
- * type Config = { foo: string, bar: number, [x: string]: unknown };
- *
- * type R1 = OgKeyof<Config>; // keyof Config
- * type R2 = Keyof<Config>; // 'foo' | 'bar'
+ * type R1 = Keyof<Config>; // 'foo' | 'bar' | 'c'
  */
 export type Keyof<T extends Dict> = T extends T
 	? Known<T> extends infer T extends Dict
@@ -39,26 +16,18 @@ export type Keyof<T extends Dict> = T extends T
 	: never;
 
 /**
- * Similar to {@linkcode OgValueof}, except it returns all known keys' values instead of all possible values when `T` contains `{ [x: string]: unknown }`.
+ * Similar to `Obj[keyof Obj]`, except it returns all possible values when `T` is a union and only known keys' values when `T` has `[x: string]: unknown` keys.
  *
  * @example
- * type Config = { foo: string, bar: number, [x: string]: unknown };
+ * type Config = { foo: string, bar: boolean, [x: string]: unknown } | { c: 4 };
  *
- * type R1 = OgValueof<Config>; // unknown
- * type R2 = Valueof<Config>; // string | number
+ * type R1 = Valueof<Config>; // string | boolean | 4
  */
 export type Valueof<T extends Dict | ROList> = T extends T
 	? Known<T> extends infer T extends Dict
 		? T[keyof T]
 		: never
 	: never;
-
-/**
- * Returns `[OgKeyof<T>, OgValueof<T>]`.
- *
- * @see {@linkcode OgKeyof} and {@linkcode OgValueof}
- */
-export type OgEntryOf<T extends Dict> = T extends T ? [keyof T, T[keyof T]] : never;
 
 /**
  * Returns `[Keyof<T>, Valueof<T>]`.
