@@ -1,0 +1,148 @@
+---
+title: other
+---
+
+## Valid
+
+```ts
+type Valid = ...
+```
+
+An alias for `any`.
+
+## Assert
+
+```ts
+type Assert<T, E> = ...
+```
+
+```ts title='Example'
+// Suppose you have a type like this
+type Token = "+" | "-" | "*" | "/";
+
+// And you want to give each member an alias:
+const tk = {
+	plus: "+",
+	minus: "-",
+	times: "*",
+	divide: "/",
+} satisfies Dict<string, Token>;
+
+// To make sure that all tokens have an alias, you can use something like this:
+{
+  type Check = Assert<AreEqual<Valueof<typeof tk>, Token>>;
+}
+// You'll see an error if there's a missing/extra token
+// Note: AreEqual and Valueof are other utils provided by this package
+```
+
+## Not
+
+```ts
+type Not<T> = ...
+```
+
+Negates a boolean.
+
+## SmartExtract
+
+```ts
+type SmartExtract<T, U> = ...
+```
+
+Similar to the built-in [Extract\<T, U>](#extract), except it return `Extract<U, T>` (or simply `U`)
+when `T` is `unknown`, `any` or a **primitive type** (string, number, boolean).
+
+## IsUnknown
+
+```ts
+type IsUnknown<T> = ...
+```
+
+Checks if a type is `unknown`.
+
+## IsAny
+
+```ts
+type IsAny<T> = ...
+```
+
+Checks if a type is `any`.
+
+## IsNever
+
+```ts
+type IsNever<T> = ...
+```
+
+Checks if a type is `never`.
+
+## IsSubtype
+
+```ts
+type IsSubtype<T, U> = ...
+```
+
+An alias for `T extends U ? true : false`.
+
+- Used to chain multiple checks together.
+- Useful to reduce nesting level for complex types.
+- Can require some thinking before using it correctly.
+- See the last comment in the example below.
+- This type is mostly for personal use :)
+
+```ts title='Example'
+// Instead of
+type Example<A, B> = A extends Dict ? B extends Dict ? "Do something" : never : never;
+
+// You can do
+type Version2<A, B> = IsSubtype<A, Dict> | IsSubtype<B, Dict> extends true ? "Do something" : never;
+
+// Note that TypeScript doesn't know about these checks, which will likely cause errors saying A and B are not objects inside the "Do Something" branch.
+```
+
+## IsNotSubtype
+
+```ts
+type IsNotSubtype<T, U> = ...
+```
+
+A negated version of [IsSubtype](#issubtype).
+
+## HasType
+
+```ts
+type HasType<U, T> = ...
+```
+
+Checks whether a union contains a specific type.
+
+```ts title='Example'
+type R1 = HasType<"foo" | "bar", "foo">; // true
+type R2 = HasType<"foo" | "bar", "baz">; // false
+```
+
+## LacksType
+
+```ts
+type LacksType<U, T> = ...
+```
+
+A negated version of [HasType](#hastype).
+
+## AreEqual
+
+```ts
+type AreEqual<A, B> = ...
+```
+
+Checks if two types are equal. Not just that they extend each other,
+but are exactly the same (at least until a bug proves otherwise).
+
+## AreNotEqual
+
+```ts
+type AreNotEqual<A, B> = ...
+```
+
+A negated version of [AreEqual](#areequal).

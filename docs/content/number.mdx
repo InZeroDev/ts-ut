@@ -1,0 +1,55 @@
+---
+title: number
+---
+
+## Digit
+
+```ts
+type Digit = ...
+```
+
+A type that represents the digits 0 through 9.
+
+## Increment
+
+```ts
+type Increment<N, C> = ...
+```
+
+Increments a number by a given amount.
+
+```ts title='Example'
+type R1 = Increment<1>; // 2
+type R2 = Increment<1, 2>; // 3
+type R3 = Increment<1, -1>; // 0
+type R4 = Increment<-1, 1>; // 0
+type R5 = Increment<-1, -1>; // -2
+```
+
+## Decrement
+
+```ts
+type Decrement<N, C> = ...
+```
+
+Decrements a number by a given amount.
+
+```ts title='Example'
+type R1 = Decrement<1>; // 0
+type R2 = Decrement<1, 2>; // -1
+type R3 = Decrement<1, -1>; // 2
+type R4 = Decrement<-1, 1>; // -2
+type R5 = Decrement<-1, -1>; // 0
+```
+
+## ToNumber
+
+```ts
+type ToNumber<T> = ...
+```
+
+Converts a number in string form to its number representation.
+
+```ts title='Example'
+type R1 = ToNumber<"123">; // 123
+```

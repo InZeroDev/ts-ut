@@ -1,0 +1,171 @@
+---
+title: string
+---
+
+## ExtractIfStartsWith
+
+```ts
+type ExtractIfStartsWith<T, P> = ...
+```
+
+Extracts from a union of strings those that start with a given prefix.
+
+```ts title='Example'
+type Keys = KeyofDeep<Config>; // 'defaults.a' | 'defaults.b' | 'messages.error' | 'messages.success'
+type R1 = ExtractIfStartsWith<Keys, 'defaults'>; // 'defaults.a' | 'defaults.b'
+type R2 = ExtractIfStartsWith<Keys, 'messages'>; // 'messages.error' | 'messages.success'
+```
+
+## ExtractIfEndsWith
+
+```ts
+type ExtractIfEndsWith<T, P> = ...
+```
+
+Extracts from a union of strings those that end with a given suffix.
+
+## ExtractIfContains
+
+```ts
+type ExtractIfContains<T, P> = ...
+```
+
+Extracts from a union of strings those that contain a given substring.
+
+## ExcludeIfStartsWith
+
+```ts
+type ExcludeIfStartsWith<T, S> = ...
+```
+
+Excludes from a union of strings those that start with a given prefix.
+
+## ExcludeIfEndsWith
+
+```ts
+type ExcludeIfEndsWith<T, S> = ...
+```
+
+Excludes from a union of strings those that end with a given suffix.
+
+## ExcludeIfContains
+
+```ts
+type ExcludeIfContains<T, S> = ...
+```
+
+Excludes from a union of strings those that contain a given substring.
+
+## FirstChar
+
+```ts
+type FirstChar<T> = ...
+```
+
+Returns the first character in a given string.
+
+## LastChar
+
+```ts
+type LastChar<T> = ...
+```
+
+Returns the last character in a given string.
+
+<Callout type='info'>
+
+This type will run `T["length"]` times to reach the last character.
+
+</Callout>
+
+## Prefix
+
+```ts
+type Prefix<T, P> = ...
+```
+
+Adds a prefix to a string.
+
+## EnsurePrefix
+
+```ts
+type EnsurePrefix<T, P> = ...
+```
+
+Adds a prefix to a string, but only if the string does not already start with the prefix.
+
+## UnPrefix
+
+```ts
+type UnPrefix<T, P> = ...
+```
+
+Removes a prefix from a string (if it exists).
+
+## Suffix
+
+```ts
+type Suffix<T, S> = ...
+```
+
+Adds a suffix to a string.
+
+## EnsureSuffix
+
+```ts
+type EnsureSuffix<T, S> = ...
+```
+
+Adds a suffix to a string, but only if the string does not already end with the suffix.
+
+## UnSuffix
+
+```ts
+type UnSuffix<T, S> = ...
+```
+
+Removes a suffix from a string (if it exists).
+
+## Stringable
+
+```ts
+type Stringable = ...
+```
+
+A type that represents values that can be converted to strings.
+
+## Suggest
+
+```ts
+type Suggest<T> = ...
+```
+
+Generates a type that suggests a pre-defined list of choices while accepting any other string.
+
+```ts title='Example'
+type Fruit = Suggest<"Apple" | "Orange">;
+
+const f1: Fruit = "Apple"; // Valid + Auto-completion
+const f2: Fruit = "Banana"; // Valid
+```
+
+## Stringify
+
+```ts
+type Stringify<T> = ...
+```
+
+Converts a [Stringable](#stringable) to its string representation.
+
+```ts title='Example'
+type R1 = Stringify<123>; // "123"
+type R2 = Stringify<{ a: 1 }>; // never
+```
+
+## Concat
+
+```ts
+type Concat<A, B, S> = ...
+```
+
+Concatenates two strings with an optional separator.

@@ -1,0 +1,467 @@
+---
+title: dict
+---
+
+## Get
+
+```ts
+type Get<T, K> = ...
+```
+
+An alias for `Obj['Key']`.
+
+```ts title='Example'
+type R1 = Get<{ a: 1, b: 2 }, 'a'>; // 1
+```
+
+## GetDeep
+
+```ts
+type GetDeep<T, K> = ...
+```
+
+Get a deeply nested value using dot-notation.
+
+```ts title='Example'
+type R1 = GetDeep<{ a: { b: { c: 1 } } }, 'a.b.c'>; // 1
+```
+
+## Keyof
+
+```ts
+type Keyof<T> = ...
+```
+
+Similar to `keyof Obj`, except it returns all possible keys when `T` is a union and only known keys when `T` has `[x: string]: unknown` keys.
+
+```ts title='Example'
+type Config = { foo: string, bar: number, [x: string]: unknown } | { c: 4 };
+
+type R1 = Keyof<Config>; // 'foo' | 'bar' | 'c'
+```
+
+## Valueof
+
+```ts
+type Valueof<T> = ...
+```
+
+Similar to `Obj[keyof Obj]`, except it returns all possible values when `T` is a union and only known keys' values when `T` has `[x: string]: unknown` keys.
+
+```ts title='Example'
+type Config = { foo: string, bar: boolean, [x: string]: unknown } | { c: 4 };
+
+type R1 = Valueof<Config>; // string | boolean | 4
+```
+
+## EntryOf
+
+```ts
+type EntryOf<T> = ...
+```
+
+Returns `[Keyof<T>, Valueof<T>]`.
+
+<Callout type='info'>
+
+See 
+
+</Callout>
+
+## KeyofDeep
+
+```ts
+type KeyofDeep<T, R> = ...
+```
+
+A deep version of [Keyof](#keyof).
+
+## KeyofType
+
+```ts
+type KeyofType<T, U> = ...
+```
+
+A version of [Keyof](#keyof) that returns only keys with values of type `U`.
+
+```ts title='Example'
+type R1 = KeyofType<{ a: 1, b: "b", c: 4 }, number>; // "a" | "c"
+```
+
+## KeyofTypeDeep
+
+```ts
+type KeyofTypeDeep<T, U> = ...
+```
+
+A deep version of [KeyofType](#keyoftype).
+
+## MergeUnion
+
+```ts
+type MergeUnion<A, B, P> = ...
+```
+
+Merge two objects by keeping all keys from `A` and `B`, on conflict, `B` wins.
+
+```ts title='Example'
+type A = { readonly a: 1, b: 2 };
+type B = { a: "<>", c: 4 };
+
+type AB1 = MergeUnion<A, B>; // { a: "<>", b: 2, c: 4 }
+type AB2 = MergeUnion<A, B, true>; // { readonly a: "<>", b: 2, c: 4 }
+```
+
+<Callout type='info'>
+
+If `P` is `true`, then on conflict `B` wins but `A`'s shape is used.
+
+</Callout>
+
+## MergePatch
+
+```ts
+type MergePatch<A, B, P> = ...
+```
+
+Merge two objects by keeping all keys from `A`, on conflict, `B` wins.
+
+```ts title='Example'
+type A = { readonly a: 1, b: 2 };
+type B = { a: "<>", c: 4 };
+
+type AB1 = MergePatch<A, B>; // { a: "<>", b: 2 }
+type AB2 = MergePatch<A, B, true>; // { readonly a: "<>", b: 2 }
+```
+
+<Callout type='info'>
+
+If `P` is `true`, then on conflict `B` wins but `A`'s shape is used.
+
+</Callout>
+
+## MergeInt
+
+```ts
+type MergeInt<A, B, P> = ...
+```
+
+Merge two objects by keeping all keys from `A` that exist in `B`, values are taken from `B`.
+
+```ts title='Example'
+type A = { readonly a: 1, b: 2 };
+type B = { a: "<>", c: 4 };
+
+type AB1 = MergeInt<A, B>; // { a: "<>" }
+type AB2 = MergeInt<A, B, true>; // { readonly a: "<>" }
+```
+
+<Callout type='info'>
+
+If `P` is `true`, then values will be taken from 'B', but `A`'s shape will be used.
+
+</Callout>
+
+## MergeDiff
+
+```ts
+type MergeDiff<A, B> = ...
+```
+
+Merge two objects by keeping all keys from `A` that `B` lacks.
+
+```ts title='Example'
+type A = { readonly a: 1, b: 2 };
+type B = { a: "<>", c: 4 };
+
+type AB = MergeDiff<A, B>; // { b: 2 }
+type BA = MergeDiff<B, A>; // { c: 4 }
+```
+
+## MergeSymDiff
+
+```ts
+type MergeSymDiff<A, B> = ...
+```
+
+Merge two objects by keeping all non-shared keys from both `A` and `B`.
+
+```ts title='Example'
+type A = { readonly a: 1, b: 2 };
+type B = { a: "<>", c: 4 };
+
+type AB = MergeSymDiff<A, B>; // { b: 2, c: 4 }
+type BA = AB;
+```
+
+## Merge
+
+```ts
+type Merge<A, B, M> = ...
+```
+
+Merge two objects using the given method.
+
+<Callout type='info'>
+
+See 
+
+</Callout>
+
+## Mutable
+
+```ts
+type Mutable<T> = ...
+```
+
+Makes all properties of `T` mutable.
+
+## RequiredDeep
+
+```ts
+type RequiredDeep<T> = ...
+```
+
+Makes all properties of `T` required (deep).
+
+## PartialDeep
+
+```ts
+type PartialDeep<T> = ...
+```
+
+Makes all properties of `T` optional (deep).
+
+## ReadonlyDeep
+
+```ts
+type ReadonlyDeep<T> = ...
+```
+
+Makes all properties of `T` readonly (deep).
+
+## MutableDeep
+
+```ts
+type MutableDeep<T> = ...
+```
+
+Makes all properties of `T` mutable (deep).
+
+## RequiredKey
+
+```ts
+type RequiredKey<T, K> = ...
+```
+
+Makes a property of `T` required.
+
+## PartialKey
+
+```ts
+type PartialKey<T, K> = ...
+```
+
+Makes a property of `T` optional.
+
+## ReadonlyKey
+
+```ts
+type ReadonlyKey<T, K> = ...
+```
+
+Makes a property of `T` readonly.
+
+## MutableKey
+
+```ts
+type MutableKey<T, K> = ...
+```
+
+Makes a property of `T` mutable.
+
+## LoosePick
+
+```ts
+type LoosePick<T, K> = ...
+```
+
+Similar to the built-in [Pick](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) type, except it lets you pass any keys
+and it will only pick the keys that actually exist in `T`.
+
+```ts title='Example'
+type R1 = Pick<{a: 1}, "a" | "b">; // { a: 1, b: unknown }
+type R2 = LoosePick<{a: 1}, "a" | "b">; // { a: 1 }
+```
+
+## StrictPick
+
+```ts
+type StrictPick<T, K> = ...
+```
+
+Similar to the built-in [Pick](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys) type, except it works differently when `T` is a union of objects.
+
+```ts title='Example'
+type R1 = Pick<{a: 1} | {b: 2}, "a">; // { a: unknown } // + Error
+type R2 = StrictPick<{a: 1} | {b: 2}, "a">; // { a: 1 } | {}
+```
+
+## LooseOmit
+
+```ts
+type LooseOmit<T, K> = ...
+```
+
+Similar to the built-in [Omit](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) type, except it suggests possible keys
+and it works differently when `T` is a union of objects.
+
+```ts title='Example'
+type R1 = Omit<{a: 1, b: 2}, "a">; // { b: 2 }
+type R2 = LooseOmit<{a: 1, b: 2}, "a">; // { b: 2 } // + Auto-completion for 'a'
+
+type R3 = Omit<{a: 1} | {b: 2}, "a">; // {}
+type R4 = LooseOmit<{a: 1} | {b: 2}, "a">; // {} | {b: 2}
+```
+
+## StrictOmit
+
+```ts
+type StrictOmit<T, K> = ...
+```
+
+Similar to the built-in [Omit](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys) type, except it enforces passing an existing key
+and it works differently when `T` is a union of objects.
+
+```ts title='Example'
+type R1 = Omit<{a: 1}, "z">; // {a: 1}
+type R2 = StrictOmit<{a: 1}, "z">; // {a: 1} // + Error saying 'z' is not an existing key
+
+type R3 = Omit<{a: 1} | {b: 2}, "a">; // {} // + Error
+type R4 = StrictOmit<{a: 1} | {b: 2}, "a">; // {} | {b: 2}
+```
+
+## PrefixKeys
+
+```ts
+type PrefixKeys<T, P> = ...
+```
+
+Adds a prefix to all keys of `T`.
+
+## PrefixKeysEnsure
+
+```ts
+type PrefixKeysEnsure<T, P> = ...
+```
+
+Adds a prefix to all keys of `T`, but only if the key does not already start with the prefix.
+
+## UnPrefixKeys
+
+```ts
+type UnPrefixKeys<T, P> = ...
+```
+
+Removes a prefix from all keys of `T`, if it exists.
+
+## SuffixKeys
+
+```ts
+type SuffixKeys<T, S> = ...
+```
+
+Adds a suffix to all keys of `T`.
+
+## SuffixKeysEnsure
+
+```ts
+type SuffixKeysEnsure<T, S> = ...
+```
+
+Adds a suffix to all keys of `T`, but only if the key does not already end with the suffix.
+
+## UnSuffixKeys
+
+```ts
+type UnSuffixKeys<T, S> = ...
+```
+
+Removes a suffix from all keys of `T`, if it exists.
+
+## RenameKey
+
+```ts
+type RenameKey<T, K, N> = ...
+```
+
+Renames a key of `T`.
+
+```ts title='Example'
+type R1 = RenameKey<{rgb: RGB, a: number}, "a", "alpha">; // { rgb: RGB, alpha: number }
+```
+
+## RenameKeys
+
+```ts
+type RenameKeys<T, M> = ...
+```
+
+Renames multiple keys of `T` using a key-to-new-key object.
+
+```ts title='Example'
+type R1 = RenameKeys<{f: string, b: string, c: 4}, {f: "foo", b: "bar"}>; // { foo: string, bar: string, c: 4 }
+```
+
+## DictKey
+
+```ts
+type DictKey = ...
+```
+
+Types that can be used as keys for an object.
+
+## Dict
+
+```ts
+type Dict<K, V> = ...
+```
+
+An alias for `Record<K, V>` with defaults.
+
+## Known
+
+```ts
+type Known<T> = ...
+```
+
+Removes `[x: string]: unknown` from an object.
+
+```ts title='Example'
+type Config = { foo: string, bar: boolean, [x: string]: string };
+type KnownConfig = Known<Config>; // { foo: string, bar: boolean }
+
+// Can also be used on tuples to get the guaranteed elements
+type R = Known<[string, number?, ...number[]]>; // [string]
+```
+
+## Prettify
+
+```ts
+type Prettify<T> = ...
+```
+
+Prettifies an object.
+
+```ts title='Example'
+type R1 = Readonly<{ a: 1 } | { b: 2 }>; // Readonly<{ a: 1 }> | Readonly<{ b: 2 }>
+type R2 = Prettify<R1>; // { readonly a: 1 } | { readonly b: 2 }
+```
+
+## PrettifyDeep
+
+```ts
+type PrettifyDeep<T> = ...
+```
+
+A deep version of [Prettify](#prettify).

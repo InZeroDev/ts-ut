@@ -1,0 +1,70 @@
+---
+title: func
+---
+
+## Func
+
+```ts
+type Func<A, R> = ...
+```
+
+Creates a function type with the given arguments and return type.
+
+```ts title='Example'
+type F1 = Func; // () => any
+type F2 = Func<[string]>; // (args_0: string) => any
+type F3 = Func<[], string>; // () => string
+type F4 = Func<[name: string], string>; // (name: string) => string
+```
+
+## OrFunc
+
+```ts
+type OrFunc<T, A> = ...
+```
+
+An alias for `T | Func<A, T>`.
+
+<Callout type='info'>
+
+See 
+
+</Callout>
+
+## VoidFn
+
+```ts
+type VoidFn = ...
+```
+
+An alias for `() => void`.
+
+## Params
+
+```ts
+type Params<F> = ...
+```
+
+An alias for [\<F>](#parameters).
+
+## Param
+
+```ts
+type Param<F, I> = ...
+```
+
+Gets the parameter at the given index. Negative indices are supported.
+
+```ts title='Example'
+type Fn = (a: string, b: number) => void;
+type R1 = Param<Fn, 0>; // string
+type R2 = Param<Fn, -1>; // number
+```
+
+## RT
+
+```ts
+type RT<F> = ...
+```
+
+An alias for [\<F>](#returntype).

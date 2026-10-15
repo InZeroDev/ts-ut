@@ -1,0 +1,128 @@
+---
+title: tuple
+---
+
+## Push
+
+```ts
+type Push<T, E, S> = ...
+```
+
+Pushes an element to the end of a tuple.
+
+```ts title='Example'
+type R1 = Push<[1, 2, 3], 4>; // [1, 2, 3, 4]
+type R2 = Push<[1, 2, 3?], 4>; // [1, 2, 3?, 4?]
+```
+
+<Callout type='info'>
+
+The tuple's shape is preserved.
+
+</Callout>
+
+## Pop
+
+```ts
+type Pop<T, N> = ...
+```
+
+Pops an element from the end of a tuple.
+
+```ts title='Example'
+type R1 = Pop<[1, 2, 3]>; // [1, 2]
+type R2 = Pop<[1, 2, 3?]>; // [1, 2]
+```
+
+## Unshift
+
+```ts
+type Unshift<T, E, S> = ...
+```
+
+Adds an element to the beginning of a tuple.
+
+```ts title='Example'
+type R1 = Unshift<[1, 2, 3], 4>; // [4, 1, 2, 3]
+type R2 = Unshift<[1, 2, 3?], 4>; // [4, 1, 2, 3?]
+```
+
+## Shift
+
+```ts
+type Shift<T, N> = ...
+```
+
+Removes an element from the beginning of a tuple.
+
+```ts title='Example'
+type R1 = Shift<[1, 2, 3]>; // [2, 3]
+type R2 = Shift<[1, 2, 3?]>; // [2, 3?]
+```
+
+## Tuple
+
+```ts
+type Tuple<L, T> = ...
+```
+
+Creates a tuple of the given length and parameter type.
+
+```ts title='Example'
+type R1 = Tuple<1>; // [unknown]
+type RGB = Tuple<3, number>; // [number, number, number]
+```
+
+## ROTuple
+
+```ts
+type ROTuple<L, T> = ...
+```
+
+A readonly version of [Tuple](#tuple).
+
+## NonEmptyTuple
+
+```ts
+type NonEmptyTuple<T, L> = ...
+```
+
+A tuple with at least `L` elements.
+
+```ts title='Example'
+type R1 = NonEmptyTuple; // [unknown, ...unknown[]]
+type R2 = NonEmptyTuple<number>; // [number, ...number[]]
+type R3 = NonEmptyTuple<number, 2>; // [number, number, ...number[]]
+```
+
+## NonEmptyROTuple
+
+```ts
+type NonEmptyROTuple<T, L> = ...
+```
+
+A readonly version of [NonEmptyTuple](#nonemptytuple).
+
+## KeyofTuple
+
+```ts
+type KeyofTuple<T> = ...
+```
+
+Returns the indexes of a tuple.
+
+```ts title='Example'
+type R1 = KeyofTuple<[1, 2, 3]>; // "0" | "1" | "2"
+```
+
+## KnownTuple
+
+```ts
+type KnownTuple<T> = ...
+```
+
+Returns the guaranteed elements of a tuple.
+
+```ts title='Example'
+type R1 = KnownTuple<[number, number, ...number[]]>; // [number, number]
+```
