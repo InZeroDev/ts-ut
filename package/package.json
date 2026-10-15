@@ -1,5 +1,5 @@
 {
-	"name": "ts-ut",
+	"name": "@inzero/ts-ut",
 	"version": "0.0.1",
 	"description": "TypeScript Utility Types",
 	"keywords": [
@@ -10,6 +10,16 @@
 	"license": "MIT",
 	"author": "InZero",
 	"main": "dist/index.d.ts",
+	"exports": {
+		".": "./dist/index.d.ts",
+		"./string": "./dist/string/index.d.ts",
+		"./number": "./dist/number/index.d.ts",
+		"./func": "./dist/func/index.d.ts",
+		"./other": "./dist/other/index.d.ts",
+		"./list": "./dist/list/index.d.ts",
+		"./tuple": "./dist/tuple/index.d.ts",
+		"./dict": "./dist/dict/index.d.ts"
+	},
 	"scripts": {
 		"build": "tsc",
 		"dev": "tsc --watch",
