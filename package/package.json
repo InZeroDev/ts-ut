@@ -9,7 +9,6 @@
 	],
 	"license": "MIT",
 	"author": "InZero",
-	"main": "dist/index.d.ts",
 	"exports": {
 		".": "./dist/index.d.ts",
 		"./string": "./dist/string/index.d.ts",
@@ -20,6 +19,7 @@
 		"./tuple": "./dist/tuple/index.d.ts",
 		"./dict": "./dist/dict/index.d.ts"
 	},
+	"main": "dist/index.d.ts",
 	"scripts": {
 		"build": "tsc",
 		"dev": "tsc --watch",
