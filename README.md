@@ -1,4 +1,4 @@
-# ts-ut
+# @inzero/ts-ut
 
 A TypeScript utility types library.
 

@@ -1,12 +1,12 @@
-# ts-ut
+# @inzero/ts-ut
 
 A TypeScript utility types library.
 
 ## Quick Examples
 
 ```ts
-import { Param } from "ts-ut";
-import { GetDeep } from "ts-ut/dict"; // Or category-specific imports
+import { Param } from "@inzero/ts-ut";
+import { GetDeep } from "@inzero/ts-ut/dict"; // Or category-specific imports
 
 type Handler = (foo: string, bar: number) => boolean;
 type LastParam = Param<Handler, -1>; // number [!code highlight]
@@ -17,8 +17,8 @@ type Target = GetDeep<Config, "b.c">; // 4 [!code highlight]
 
 ## Installation
 
-```npm
-npm install -D ts-ut
+```sh
+pnpm add -D @inzero/ts-ut
 ```
 
 ## Docs
