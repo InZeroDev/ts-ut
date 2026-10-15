@@ -20,6 +20,13 @@
 		"./dict": "./dist/dict/index.d.ts"
 	},
 	"main": "dist/index.d.ts",
+	"files": [
+		"dist",
+		"package.json",
+		"README.md",
+		"LICENSE",
+		"CHANGELOG.md"
+	],
 	"scripts": {
 		"build": "tsc",
 		"dev": "tsc --watch",
