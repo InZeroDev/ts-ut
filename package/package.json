@@ -30,9 +30,12 @@
 	"scripts": {
 		"build": "tsc",
 		"dev": "tsc --watch",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"gen-barrel": "barrel src/index.ts src/*/index.ts",
+		"prepublish": "pnpm gen-barrel; pnpm build"
 	},
 	"devDependencies": {
+		"@inzero/barrel": "0.0.2",
 		"prettier": "^3.9.10",
 		"prettier-plugin-packagejson": "^3.0.2",
 		"typescript": "^7.0.2"
