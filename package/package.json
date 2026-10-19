@@ -1,6 +1,6 @@
 {
 	"name": "@inzero/ts-ut",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "TypeScript Utility Types",
 	"keywords": [
 		"typescript",
