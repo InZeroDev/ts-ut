@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.0] 2026-10-19
+
+### Added
+
+- Expose internal types through `@inzero/ts-ut/internal`
+
 ## [0.1.2] 2026-10-19
 
 ### Fixed

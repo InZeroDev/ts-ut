@@ -1,6 +1,6 @@
 {
 	"name": "@inzero/ts-ut",
-	"version": "0.1.2",
+	"version": "0.2.0",
 	"description": "TypeScript Utility Types",
 	"keywords": [
 		"typescript",
@@ -11,6 +11,7 @@
 	"author": "InZero",
 	"exports": {
 		".": "./dist/index.d.ts",
+		"./_internal": "./dist/_internal.d.ts",
 		"./string": "./dist/string/index.d.ts",
 		"./number": "./dist/number/index.d.ts",
 		"./func": "./dist/func/index.d.ts",

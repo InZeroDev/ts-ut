@@ -1,6 +1,4 @@
-import type { IsNegative } from "../_internal";
 import type { List, ROList } from "../list";
-import type { Decrement, Increment } from "../number";
 
 /**
  * Creates a tuple of the given length and parameter type.

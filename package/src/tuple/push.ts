@@ -1,4 +1,4 @@
-import type { As, NormalizeIndex } from "../_internal";
+import type { As, IsTuple, MatchTuple, NegAbs, NormalizeIndex } from "../_internal";
 import type { Mutable } from "../dict";
 import type { List, ROList } from "../list";
 import type { Increment, ToNumber } from "../number";
@@ -66,44 +66,3 @@ export type Shift<T extends ROList, N extends number = 1> =
 
 // ---Internal---
 
-type NegAbs<T extends number> = T extends 0 ? 0 : ToNumber<EnsurePrefix<Stringify<T>, "-">>;
-
-type FOE<T extends ROList, _C extends List = []> =
-	T extends Required<T>
-		? -1
-		: T extends readonly [unknown, ...infer R extends ROList]
-			? FOE<R, [..._C, any]>
-			: _C["length"];
-
-type SetFOE<T extends ROList, I extends number> = _SetFOE<T, NormalizeIndex<I, T["length"]>>;
-
-type _SetFOE<T extends ROList, I extends number, _I extends List = []> = T extends readonly [
-	infer F,
-	...infer R,
-]
-	? I extends _I["length"]
-		? [F?, ...Partial<R>]
-		: [F, ..._SetFOE<R, I, [..._I, any]>]
-	: T;
-
-type MatchTuple<T extends ROList, R extends ROList, D extends number = 0> = MatchRO<
-	MatchFOI<T, R, D>,
-	R
->;
-
-type MatchFOI<T extends ROList, R extends ROList, D extends number = 0> =
-	FOE<R> extends -1
-		? BetterRequired<T>
-		: SetFOE<BetterRequired<T>, Increment<FOE<R>, D>> extends infer R extends ROList
-			? R
-			: never;
-
-type MatchRO<T extends ROList, R extends ROList> = Readonly<R> extends R ? Readonly<T> : Mutable<T>;
-
-type BetterRequired<T> = T extends T ? Required<T> : never;
-
-type IsTuple<T> = T extends T
-	? Required<T> extends readonly [] | readonly [unknown, ...unknown[]]
-		? true
-		: false
-	: never;
