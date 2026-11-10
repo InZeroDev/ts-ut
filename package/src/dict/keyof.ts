@@ -124,12 +124,12 @@ export type KeysOfTypeDeep<T, U, _K extends string = ""> = T extends T
 		}>
 	: never;
 
-export type KeysWithTypeDeep<T, U, _K extends string = ""> = T extends T
+export type KeysContainingTypeDeep<T, U, _K extends string = ""> = T extends T
 	? Values<{
 			[P in keyof T as HasType<T[P], U | Dict> extends true ? P : never]-?: T[P] extends infer TK
 				? Next<P & string, _K> extends infer N extends string
 					? HasType<TK, Dict> extends true
-						? KeysWithTypeDeep<Extract<TK, Dict>, U, N>
+						? KeysContainingTypeDeep<Extract<TK, Dict>, U, N>
 						: N
 					: never
 				: never;
