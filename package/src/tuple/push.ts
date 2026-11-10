@@ -1,4 +1,4 @@
-import type { As, IsTuple, MatchTuple, NegAbs, NormalizeIndex } from "../_internal";
+import type { IsTuple, MatchTuple, NegAbs, NormalizeIndex } from "../_internal";
 import type { Mutable } from "../dict";
 import type { List, ROList } from "../list";
 import type { Increment, ToNumber } from "../number";
@@ -17,7 +17,7 @@ import type { Tuple } from "./utils";
  */
 export type Push<T extends ROList, E, S extends boolean = false> = [
 	...Required<T>,
-	...(IsSubtype<S, true> | IsSubtype<E, ROList> extends true ? As<ROList, E> : [E]),
+	...(IsSubtype<S, true> | IsSubtype<E, ROList> extends true ? Extract<E, ROList> : [E]),
 ] extends infer Result extends ROList
 	? MatchTuple<Result, T>
 	: never;
@@ -42,13 +42,13 @@ export type Pop<T extends ROList, N extends number = 1> =
  * type R2 = Unshift<[1, 2, 3?], 4>; // [4, 1, 2, 3?]
  */
 export type Unshift<T extends ROList, E, S extends boolean = false> = [
-	...(IsSubtype<S, true> | IsSubtype<E, ROList> extends true ? As<ROList, E> : [E]),
+	...(IsSubtype<S, true> | IsSubtype<E, ROList> extends true ? Extract<E, ROList> : [E]),
 	...Required<T>,
 ] extends infer Result extends ROList
 	? MatchTuple<
 			Result,
 			T,
-			IsSubtype<S, true> | IsTuple<E> extends true ? As<ROList, E>["length"] : 1
+			IsSubtype<S, true> | IsTuple<E> extends true ? Extract<E, ROList>["length"] : 1
 		>
 	: never;
 
