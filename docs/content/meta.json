@@ -1,3 +1,14 @@
 {
-  "pages": ["index", "---Utils---",  "string", "number", "func", "other", "list", "tuple", "dict", "..."]
+	"pages": [
+		"index",
+		"---Utils---",
+		"string",
+		"number",
+		"func",
+		"other",
+		"list",
+		"tuple",
+		"dict",
+		"..."
+	]
 }

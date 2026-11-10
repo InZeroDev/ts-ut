@@ -2,7 +2,9 @@
 title: func
 ---
 
-## Func
+## utils
+
+### Func
 
 ```ts
 type Func<A, R> = ...
@@ -17,7 +19,7 @@ type F3 = Func<[], string>; // () => string
 type F4 = Func<[name: string], string>; // (name: string) => string
 ```
 
-## OrFunc
+### OrFunc
 
 ```ts
 type OrFunc<T, A> = ...
@@ -27,11 +29,11 @@ An alias for `T | Func<A, T>`.
 
 <Callout type='info'>
 
-See 
+See [Func](#func)
 
 </Callout>
 
-## VoidFn
+### VoidFn
 
 ```ts
 type VoidFn = ...
@@ -39,15 +41,15 @@ type VoidFn = ...
 
 An alias for `() => void`.
 
-## Params
+### Params
 
 ```ts
 type Params<F> = ...
 ```
 
-An alias for [\<F>](#parameters).
+An alias for `Parameters`.
 
-## Param
+### Param
 
 ```ts
 type Param<F, I> = ...
@@ -61,10 +63,10 @@ type R1 = Param<Fn, 0>; // string
 type R2 = Param<Fn, -1>; // number
 ```
 
-## RT
+### RT
 
 ```ts
 type RT<F> = ...
 ```
 
-An alias for [\<F>](#returntype).
+An alias for [ReturnType](https://www.typescriptlang.org/docs/handbook/utility-types.html#returntypetype).

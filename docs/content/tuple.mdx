@@ -2,7 +2,9 @@
 title: tuple
 ---
 
-## Push
+## push
+
+### Push
 
 ```ts
 type Push<T, E, S> = ...
@@ -21,7 +23,7 @@ The tuple's shape is preserved.
 
 </Callout>
 
-## Pop
+### Pop
 
 ```ts
 type Pop<T, N> = ...
@@ -34,7 +36,7 @@ type R1 = Pop<[1, 2, 3]>; // [1, 2]
 type R2 = Pop<[1, 2, 3?]>; // [1, 2]
 ```
 
-## Unshift
+### Unshift
 
 ```ts
 type Unshift<T, E, S> = ...
@@ -47,7 +49,7 @@ type R1 = Unshift<[1, 2, 3], 4>; // [4, 1, 2, 3]
 type R2 = Unshift<[1, 2, 3?], 4>; // [4, 1, 2, 3?]
 ```
 
-## Shift
+### Shift
 
 ```ts
 type Shift<T, N> = ...
@@ -60,7 +62,9 @@ type R1 = Shift<[1, 2, 3]>; // [2, 3]
 type R2 = Shift<[1, 2, 3?]>; // [2, 3?]
 ```
 
-## Tuple
+## utils
+
+### Tuple
 
 ```ts
 type Tuple<L, T> = ...
@@ -73,7 +77,7 @@ type R1 = Tuple<1>; // [unknown]
 type RGB = Tuple<3, number>; // [number, number, number]
 ```
 
-## ROTuple
+### ROTuple
 
 ```ts
 type ROTuple<L, T> = ...
@@ -81,7 +85,7 @@ type ROTuple<L, T> = ...
 
 A readonly version of [Tuple](#tuple).
 
-## NonEmptyTuple
+### NonEmptyTuple
 
 ```ts
 type NonEmptyTuple<T, L> = ...
@@ -95,7 +99,7 @@ type R2 = NonEmptyTuple<number>; // [number, ...number[]]
 type R3 = NonEmptyTuple<number, 2>; // [number, number, ...number[]]
 ```
 
-## NonEmptyROTuple
+### NonEmptyROTuple
 
 ```ts
 type NonEmptyROTuple<T, L> = ...
@@ -103,7 +107,7 @@ type NonEmptyROTuple<T, L> = ...
 
 A readonly version of [NonEmptyTuple](#nonemptytuple).
 
-## KeyofTuple
+### KeyofTuple
 
 ```ts
 type KeyofTuple<T> = ...
@@ -115,7 +119,7 @@ Returns the indexes of a tuple.
 type R1 = KeyofTuple<[1, 2, 3]>; // "0" | "1" | "2"
 ```
 
-## KnownTuple
+### KnownTuple
 
 ```ts
 type KnownTuple<T> = ...

@@ -2,7 +2,9 @@
 title: number
 ---
 
-## Digit
+## increment
+
+### Digit
 
 ```ts
 type Digit = ...
@@ -10,7 +12,7 @@ type Digit = ...
 
 A type that represents the digits 0 through 9.
 
-## Increment
+### Increment
 
 ```ts
 type Increment<N, C> = ...
@@ -26,7 +28,7 @@ type R4 = Increment<-1, 1>; // 0
 type R5 = Increment<-1, -1>; // -2
 ```
 
-## Decrement
+### Decrement
 
 ```ts
 type Decrement<N, C> = ...
@@ -42,7 +44,9 @@ type R4 = Decrement<-1, 1>; // -2
 type R5 = Decrement<-1, -1>; // 0
 ```
 
-## ToNumber
+## utils
+
+### ToNumber
 
 ```ts
 type ToNumber<T> = ...
