@@ -13,20 +13,21 @@ export type DictKey = string | number | symbol;
 export type Dict<K extends DictKey = string, V = unknown> = Record<K, V>;
 
 /**
- * Removes `[x: string]: unknown` from an object.
+ * Removes the index signature from an object.
  *
  * @example
  * type Config = { foo: string, bar: boolean, [x: string]: string };
  * type KnownConfig = Known<Config>; // { foo: string, bar: boolean }
- *
- * // Can also be used on tuples to get the guaranteed elements
- * type R = Known<[string, number?, ...number[]]>; // [string]
  */
-export type Known<T extends Dict | ROList> = T extends T
-	? T extends ROList
-		? KnownTuple<T>
-		: { [P in keyof T as HasType<DictKey, P> extends true ? never : P]: T[P] }
+export type Known<T> = T extends T
+	? { [P in keyof T as HasType<DictKey, P> extends true ? never : P]: T[P] }
 	: never;
+
+/**
+ * Generates a type that suggests a pre-defined list of dictionary keys while accepting any other string or number.
+ */
+export type SuggestKey<T, S extends boolean = false> =
+	Extract<T, DictKey> | (string & {}) | (number & {}) | (S extends true ? never : symbol & {});
 
 /**
  * Prettifies an object.
@@ -41,5 +42,5 @@ export type Prettify<T> = { [P in keyof T]: T[P] } & {};
  * A deep version of {@linkcode Prettify}.
  */
 export type PrettifyDeep<T> = {
-	[P in keyof T]: T[P] extends infer V ? (V extends Dict | ROList ? PrettifyDeep<V> : V) : never;
+	[P in keyof T]: T[P] extends infer V ? (V extends Dict ? PrettifyDeep<V> : V) : never;
 } & {};
