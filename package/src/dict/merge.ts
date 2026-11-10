@@ -272,6 +272,8 @@ export type Merge<
 
 /**
  * Merge two objects deeply using the specified method. (default: "union")
+ *
+ * @see {@linkcode MergeUnionDeep}, {@linkcode MergePatchDeep}, {@linkcode MergeIntDeep}, {@linkcode MergeDiffDeep} and {@linkcode MergeSymDiffDeep}
  */
 export type MergeDeep<
 	A,
