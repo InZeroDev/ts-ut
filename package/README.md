@@ -9,10 +9,10 @@ import { Param } from "@inzero/ts-ut";
 import { GetDeep } from "@inzero/ts-ut/dict"; // Or category-specific imports
 
 type Handler = (foo: string, bar: number) => boolean;
-type LastParam = Param<Handler, -1>; // number [!code highlight]
+type LastParam = Param<Handler, -1>; // number
 
 type Config = { a: 1; b: { c: 4 } };
-type Target = GetDeep<Config, "b.c">; // 4 [!code highlight]
+type Target = GetDeep<Config, "b.c">; // 4
 ```
 
 ## Installation
