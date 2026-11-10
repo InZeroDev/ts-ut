@@ -1,4 +1,4 @@
-import type { Mutable } from "./dict";
+import type { Mutable, SetDeep } from "./dict";
 import type { List, ROList } from "./list";
 import type { Decrement, Increment, ToNumber } from "./number";
 import type { AreEqual, IsAny, IsNever, IsSubtype, IsUnknown } from "./other";
@@ -10,11 +10,11 @@ export type IsNegative<T extends string | number> = T extends T
 		: false
 	: never;
 
+export type IsNumber<T extends string> = ToNumber<T> extends number ? true : false;
+
 export type StartsWith<T extends string, P extends string> = T extends `${P}${string}`
 	? true
 	: false;
-
-export type As<T, U> = Extract<U, T>;
 
 export type NormalizeIndex<I extends number, L extends number | ROList> = (
 	L extends ROList ? L["length"] : L
@@ -88,3 +88,6 @@ type _Wrap<T> = (T extends T ? [T] : never) extends infer R
 		? [boolean] | Exclude<R, [boolean]>
 		: R
 	: never;
+
+declare const __TS_UT: unique symbol;
+export type TS_UT = typeof __TS_UT;
