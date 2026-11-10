@@ -1,5 +1,5 @@
 import type { AreEqual, HasType } from "../other";
-import type { SuggestKey } from "../string";
+import type { SuggestKey } from "./utils";
 import type { Keys, Values } from "./keyof";
 import type { Dict, Known } from "./utils";
 
