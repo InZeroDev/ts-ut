@@ -1,109 +1,160 @@
-import type { ROList } from "../list";
-import type { Dict, Known } from "./utils";
+import type { IsTuple } from "../_internal";
+import type { AreEqual, HasType, Self } from "../other";
+import type { Stringify } from "../string";
+import type { KeyofTuple } from "../tuple";
+import type { Get, GetDeep } from "./get";
+import type { Dict, DictKey, Known } from "./utils";
 
 /**
- * Similar to `keyof Obj`, except it returns all possible keys when `T` is a union and only known keys when `T` has `[x: string]: unknown` keys.
+ * Returns all possible keys.
  *
  * @example
- * type Config = { foo: string, bar: number, [x: string]: unknown } | { c: 4 };
+ * type Config = { foo: string, bar: number } | { c: 4 };
  *
- * type R1 = Keyof<Config>; // 'foo' | 'bar' | 'c'
+ * type R1 = keyof Config; // never
+ * type R2 = Keys<Config>; // 'foo' | 'bar' | 'c'
  */
-export type Keyof<T extends Dict> = T extends T
-	? Known<T> extends infer T extends Dict
-		? keyof T
-		: never
-	: never;
+export type Keys<T> = T extends T ? keyof T : never;
 
 /**
- * Similar to `Obj[keyof Obj]`, except it returns all possible values when `T` is a union and only known keys' values when `T` has `[x: string]: unknown` keys.
+ * Returns all possible values.
  *
  * @example
- * type Config = { foo: string, bar: boolean, [x: string]: unknown } | { c: 4 };
+ * type Config = { foo: string } | { c: 4 };
  *
- * type R1 = Valueof<Config>; // string | boolean | 4
+ * type R1 = Values<Config>; // string | 4
  */
-export type Valueof<T extends Dict | ROList> = T extends T
-	? Known<T> extends infer T extends Dict
-		? T[keyof T]
-		: never
-	: never;
+export type Values<T> = T extends T ? T[keyof T] : never;
 
 /**
- * Returns `[Keyof<T>, Valueof<T>]`.
+ * Returns all possible entries.
  *
- * @see {@linkcode Keyof} and {@linkcode Valueof}
+ * @example
+ * type Config = { foo: string, bar: number } | { c: 4 };
+ *
+ * type R1 = Entries<Config>; // ["foo" | "bar", string | number] | ["c", 4]
  */
-export type EntryOf<T extends Dict> = T extends T
-	? Known<T> extends infer T extends Dict
-		? [keyof T, T[keyof T]]
-		: never
-	: never;
+export type Entries<T> = T extends T ? [Keys<T>, Values<T>] : never;
 
 /**
- * A deep version of {@linkcode Keyof}.
+ * A deep version of {@linkcode Keys}.
+ *
+ * @remarks `R` controls whether to return leaf keys, parent keys, or both (default).
+ *
+ * @example
+ * type Config = { foo: string, bar: { baz: number } };
+ *
+ * type R1 = KeysDeep<Config> // "foo" | "bar" | "bar.baz"
+ * type R2 = KeysDeep<Config, "leaf"> // "foo" | "bar.baz"
+ * type R3 = KeysDeep<Config, "parent"> // "bar"
  */
-export type KeyofDeep<
-	T extends Dict | ROList,
-	R extends "leaf" | "parent" | "both" = "both",
-> = T extends T ? _KeyofDeep<T, R> : never;
-
-type _KeyofDeep<
-	T extends Dict | ROList,
+export type KeysDeep<
+	T,
 	R extends "leaf" | "parent" | "both" = "both",
 	_K extends string = "",
-> = {
-	[P in keyof T]: T[P] extends infer TK
-		? NextKey<P & string, _K> extends infer N extends string
-			? TK extends Dict | ROList
-				? (R extends "leaf" ? never : N) | _KeyofDeep<TK, R, N>
-				: R extends "parent"
-					? never
-					: N
-			: never
-		: never;
-}[T extends ROList ? number & keyof T : keyof T];
+> = T extends T
+	? Values<{
+			[P in keyof T as P extends string | number ? P : never]-?: T[P] extends infer TP
+				? Next<P & (string | number), _K> extends infer N extends string
+					? TP extends Dict
+						? (R extends "leaf" ? never : N) | KeysDeep<TP, R, N>
+						: R extends "parent"
+							? never
+							: N
+					: never
+				: never;
+		}>
+	: never;
 
 /**
- * A version of {@linkcode Keyof} that returns only keys with values of type `U`.
+ * Returns the keys of `T` whose values are assignable to `U`.
  *
  * @example
  * type R1 = KeyofType<{ a: 1, b: "b", c: 4 }, number>; // "a" | "c"
+ * type R2 = KeyofType<{ a: 1, [x: string]: number }, number>; // string | number
  */
-export type KeyofType<T extends Dict, U> = T extends T
+export type KeysOfType<T, U> = T extends T
 	? keyof {
 			[P in keyof T as T[P] extends U ? P : never]: T[P];
 		}
 	: never;
 
 /**
- * A deep version of {@linkcode KeyofType}.
+ * Returns the keys of `T` whose values have one of the types in `U`.
+ *
+ * @example
+ * type Obj = { a: number, b: boolean | number };
+ *
+ * type R1 = KeysOfType<Obj, number>; // "a"
+ * type R2 = KeysWithType<Obj, number>; // "a" | "b"
  */
-export type KeyofTypeDeep<T extends Dict | ROList, U> = T extends T ? _KeyofTypeDeep<T, U> : never;
+export type KeysContainingType<T, U> = T extends T
+	? keyof {
+			[P in keyof T as HasType<T[P], U> extends true ? P : never]: T[P];
+		}
+	: never;
 
-type _KeyofTypeDeep<T extends Dict | ROList, U, _K extends string = ""> = {
-	[
-		P in keyof T as T extends ROList
-			? P extends `${number}`
-				? T[P] extends U | Dict | ROList
-					? P
+export type KeysOfExactType<T, U> = T extends T
+	? keyof {
+			[P in keyof T as AreEqual<T[P], U> extends true ? P : never]: T[P];
+		}
+	: never;
+
+/**
+ * A deep version of {@linkcode KeysOfType}.
+ *
+ * @example
+ * type Config = { foo: string, bar: { baz: number } };
+ *
+ * type R1 = KeysOfTypeDeep<Config, string> // "foo"
+ * type R2 = KeysOfTypeDeep<Config, number> // "bar.baz"
+ */
+
+export type KeysOfTypeDeep<T, U, _K extends string = ""> = T extends T
+	? Values<{
+			[
+				P in keyof T as T[P] extends U ? P : HasType<T[P], Dict> extends true ? P : never
+			]-?: T[P] extends infer TK
+				? Next<P & string, _K> extends infer N extends string
+					? HasType<TK, Dict> extends true
+						? KeysOfTypeDeep<Extract<TK, Dict>, U, N>
+						: N
 					: never
-				: never
-			: T[P] extends U | Dict | ROList
-				? P
-				: never
-	]: T[P] extends infer TK
-		? NextKey<P & string, _K> extends infer N extends string
-			? TK extends Dict | ROList
-				? _KeyofTypeDeep<TK, U, N>
-				: N
-			: never
-		: never;
-} extends infer T
-	? T extends ROList
-		? T[number]
-		: T[keyof T]
+				: never;
+		}>
+	: never;
+
+export type KeysWithTypeDeep<T, U, _K extends string = ""> = T extends T
+	? Values<{
+			[P in keyof T as HasType<T[P], U | Dict> extends true ? P : never]-?: T[P] extends infer TK
+				? Next<P & string, _K> extends infer N extends string
+					? HasType<TK, Dict> extends true
+						? KeysWithTypeDeep<Extract<TK, Dict>, U, N>
+						: N
+					: never
+				: never;
+		}>
+	: never;
+
+export type KeysOfExactTypeDeep<T, U, _K extends string = ""> = T extends T
+	? Values<{
+			[
+				P in keyof T as AreEqual<T[P], U> extends true
+					? P
+					: HasType<T[P], Dict> extends true
+						? P
+						: never
+			]-?: T[P] extends infer TK
+				? Next<P & string, _K> extends infer N extends string
+					? HasType<TK, Dict> extends true
+						? KeysOfExactTypeDeep<Extract<TK, Dict>, U, N>
+						: N
+					: never
+				: never;
+		}>
 	: never;
 
 // ---Internal---
-type NextKey<K extends string, _K extends string> = _K extends "" ? K : `${_K}.${K}`;
+type Next<K extends string | number, _K extends string> = _K extends ""
+	? Stringify<K>
+	: `${_K}.${K}`;
