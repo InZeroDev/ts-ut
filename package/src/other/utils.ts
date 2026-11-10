@@ -54,7 +54,7 @@ export type Assert<T extends E, E = true> = T;
 export type Not<T extends boolean> = T extends true ? false : true;
 
 /**
- * Similar to the built-in {@linkcode Extract Extract<T, U>}, except it return `Extract<U, T>` (or simply `U`)
+ * Similar to the built-in {@linkcode Extract}, except it return `Extract<U, T>` (or simply `U`)
  * when `T` is `unknown`, `any` or a **primitive type** (string, number, boolean).
  */
 export type SmartExtract<T, U> = T extends T
