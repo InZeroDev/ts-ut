@@ -1,11 +1,30 @@
-import type { IsPrimitive } from "../_internal";
-import type { Dict, Valueof } from "../dict";
+import type { IsPrimitive, TS_UT } from "../_internal";
+import type { GetDeep } from "../dict";
+import type { ExtractIfStartsWith } from "../string";
 import type { AreEqual, IsAny, IsNever, IsSubtype, IsUnknown } from "./validation";
 
 /**
  * An alias for `any`.
  */
 export type Valid = any;
+
+/**
+ * A range type.
+ *
+ * @example
+ * const ranges = elements.map<Range>((ele) => [ele.getStart(), ele.getEnd()]);
+ */
+export type Range = [start: number, end: number];
+
+/**
+ * Removes `undefined` and `null` from a type.
+ */
+export type NonNullish<T> = Exclude<T, undefined | null>;
+
+/**
+ * Adds `undefined` and `null` to a type.
+ */
+export type Nullish<T> = T | undefined | null;
 
 /**
  * @example
@@ -22,10 +41,10 @@ export type Valid = any;
  *
  * // To make sure that all tokens have an alias, you can use something like this:
  * {
- *   type Check = Assert<AreEqual<Valueof<typeof tk>, Token>>;
+ *   type Check = Assert<AreEqual<Values<typeof tk>, Token>>;
  * }
  * // You'll see an error if there's a missing/extra token
- * // Note: AreEqual and Valueof are other utils provided by this package
+ * // Note: AreEqual and Values are other utils provided by this package
  */
 export type Assert<T extends E, E = true> = T;
 
@@ -44,3 +63,16 @@ export type SmartExtract<T, U> = T extends T
 		: Extract<U, T>
 	: never;
 
+/**
+ * Useful for debugging.
+ */
+export type Self<T, I1 = TS_UT, I2 = TS_UT, I3 = TS_UT, I4 = TS_UT, I5 = TS_UT> = {
+	T: T;
+	1: I1;
+	2: I2;
+	3: I3;
+	4: I4;
+	5: I5;
+} extends infer R
+	? { [P in keyof R as R[P] extends TS_UT ? never : P]: R[P] }
+	: never;
