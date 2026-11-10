@@ -1,12 +1,12 @@
 import type { JSDoc, TypeAliasDeclaration } from "ts-morph";
 import { Md } from "../utils";
-import { replaceLinkcode } from "./utils";
+import { convertJsDocLinks } from "./utils";
 
 export function genTypeText(type: TypeAliasDeclaration) {
   const data = extractTypeData(type);
 
   const md = new Md();
-  md.appendLine("## " + data.name)
+  md.appendLine("### " + data.name)
     .newLine()
 
     .appendLine(data.shape);
@@ -48,7 +48,7 @@ function extractTypeShape(type: TypeAliasDeclaration) {
 function extractTypeDescription(doc: JSDoc | undefined) {
   if (!doc) return;
 
-  return replaceLinkcode(doc.getDescription()?.trim());
+  return convertJsDocLinks(doc.getDescription()?.trim());
 }
 
 function extractTypeExample(doc: JSDoc | undefined) {
@@ -74,7 +74,7 @@ function extractTypeNote(doc: JSDoc | undefined, tagName: "remarks" | "see") {
   return new Md()
     .appendLine("<Callout type='info'>")
     .newLine()
-    .appendLine(tagName === "see" ? "See " : "" + replaceLinkcode(note))
+    .appendLine((tagName === "see" ? "See " : "") + convertJsDocLinks(note))
     .newLine()
     .appendLine("</Callout>").text;
 }

@@ -16,6 +16,16 @@ const groupedSourceFiles = Object.entries(
   Object.groupBy(sourceFiles, (sf) => path.basename(sf.getDirectoryPath())),
 ) as [string, sourceFiles: SourceFile[]][];
 
+groupedSourceFiles.forEach(([, sourceFiles]) =>
+	sourceFiles.sort((a) => {
+		const aName = a.getBaseName();
+		if (aName === "validation.ts") return -1;
+		if (aName === "utils.ts") return 1;
+		return 0;
+	}),
+);
+
+
 for (const [group, sourceFiles] of groupedSourceFiles) {
   const outFile = joinDocs("content", group + ".mdx");
 
@@ -28,7 +38,9 @@ for (const [group, sourceFiles] of groupedSourceFiles) {
 
   for (const sourceFile of sourceFiles) {
     const fileText = genFileText(sourceFile);
-    md.append(fileText);
+    md.appendLine("## " + sourceFile.getBaseNameWithoutExtension())
+      .newLine()
+      .append(fileText);
   }
 
   md.removeLine();
@@ -47,4 +59,3 @@ function genFileText(sourceFile: SourceFile) {
 
   return md.text;
 }
-
