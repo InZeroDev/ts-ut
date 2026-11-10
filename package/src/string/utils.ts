@@ -12,7 +12,7 @@ export type Stringable = string | number | boolean | bigint | null | undefined;
  * const f1: Fruit = "Apple"; // Valid + Auto-completion
  * const f2: Fruit = "Banana"; // Valid
  */
-export type Suggest<T extends string> = T | (string & {});
+export type Suggest<T> = Extract<T, string> | (string & {});
 
 /**
  * Converts a {@linkcode Stringable} to its string representation.
