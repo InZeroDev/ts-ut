@@ -3,7 +3,7 @@ import { builtInTypeDocUrl } from "./constants";
 
 export function resolvePaths(...paths: string[]) {
   const gen = (pth: string): string =>
-    pth.startsWith("!") ? `!${resolvePaths(pth.slice(1))}` : joinPkg(pth);
+    pth.startsWith("!") ? `!${joinPkg(pth.slice(1))}` : joinPkg(pth);
 
   return paths.map(gen);
 }
