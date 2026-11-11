@@ -33,16 +33,21 @@ function extractTypeData(type: TypeAliasDeclaration) {
 }
 
 function extractTypeShape(type: TypeAliasDeclaration) {
-  const name = type.getName();
-  const params = type.getTypeParameters().map((param) => param.getName());
-  const body = "...";
+  type.setIsExported(false);
+  const text = type.getText();
+  const body = type.getTypeNodeOrThrow();
+  const shape = text.slice(0, body.getStart() - type.getStart()).replace(/\s*=\s*$/, "");
 
-  const shape =
-    `type ${name}` +
-    (params.length ? `<${params.join(", ")}>` : "") +
-    ` = ${body}`;
+  return new Md()
+    .appendLine("```ts tab='Shape'")
+    .appendLine(shape)
+    .appendLine("```")
 
-  return new Md().appendLine("```ts").appendLine(shape).appendLine("```").text;
+    .newLine()
+
+    .appendLine("```ts tab='Source'")
+    .appendLine(text.trim())
+    .appendLine("```").text;
 }
 
 function extractTypeDescription(doc: JSDoc | undefined) {
