@@ -6,8 +6,12 @@ title: func
 
 ### Func
 
-```ts
-type Func<A, R> = ...
+```ts tab='Shape'
+type Func<A extends ROList = any[], R = any>
+```
+
+```ts tab='Source'
+type Func<A extends ROList = any[], R = any> = (...args: A) => R;
 ```
 
 Creates a function type with the given arguments and return type.
@@ -21,8 +25,12 @@ type F4 = Func<[name: string], string>; // (name: string) => string
 
 ### OrFunc
 
-```ts
-type OrFunc<T, A> = ...
+```ts tab='Shape'
+type OrFunc<T, A extends ROList = []>
+```
+
+```ts tab='Source'
+type OrFunc<T, A extends ROList = []> = T | Func<A, T>;
 ```
 
 An alias for `T | Func<A, T>`.
@@ -35,24 +43,36 @@ See [Func](#func)
 
 ### VoidFn
 
-```ts
-type VoidFn = ...
+```ts tab='Shape'
+type VoidFn
+```
+
+```ts tab='Source'
+type VoidFn = Func<[], void>;
 ```
 
 An alias for `() => void`.
 
 ### Params
 
-```ts
-type Params<F> = ...
+```ts tab='Shape'
+type Params<F extends Func>
+```
+
+```ts tab='Source'
+type Params<F extends Func> = Parameters<F>;
 ```
 
 An alias for `Parameters`.
 
 ### Param
 
-```ts
-type Param<F, I> = ...
+```ts tab='Shape'
+type Param<F extends Func, I extends number>
+```
+
+```ts tab='Source'
+type Param<F extends Func, I extends number> = Params<F>[NormalizeIndex<I, Params<F>>];
 ```
 
 Gets the parameter at the given index. Negative indices are supported.
@@ -65,8 +85,12 @@ type R2 = Param<Fn, -1>; // number
 
 ### RT
 
-```ts
-type RT<F> = ...
+```ts tab='Shape'
+type RT<F extends Func>
+```
+
+```ts tab='Source'
+type RT<F extends Func> = ReturnType<F>;
 ```
 
 An alias for [ReturnType](https://www.typescriptlang.org/docs/handbook/utility-types.html#returntypetype).

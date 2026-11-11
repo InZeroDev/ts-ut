@@ -6,54 +6,98 @@ title: string
 
 ### ExtractIfStartsWith
 
-```ts
-type ExtractIfStartsWith<T, P> = ...
+```ts tab='Shape'
+type ExtractIfStartsWith<T extends string, P extends string>
+```
+
+```ts tab='Source'
+type ExtractIfStartsWith<T extends string, P extends string> = T extends `${P}${string}`
+	? T
+	: never;
 ```
 
 Extracts from a union of strings those that start with a given prefix.
 
 ```ts title='Example'
 type Keys = KeyofDeep<Config>; // 'defaults.a' | 'defaults.b' | 'messages.error' | 'messages.success'
-type R1 = ExtractIfStartsWith<Keys, "defaults">; // 'defaults.a' | 'defaults.b'
-type R2 = ExtractIfStartsWith<Keys, "messages">; // 'messages.error' | 'messages.success'
+type R1 = ExtractIfStartsWith<Keys, 'defaults'>; // 'defaults.a' | 'defaults.b'
+type R2 = ExtractIfStartsWith<Keys, 'messages'>; // 'messages.error' | 'messages.success'
 ```
 
 ### ExtractIfEndsWith
 
-```ts
-type ExtractIfEndsWith<T, P> = ...
+```ts tab='Shape'
+type ExtractIfEndsWith<T extends string, P extends string>
+```
+
+```ts tab='Source'
+type ExtractIfEndsWith<T extends string, P extends string> = T extends `${string}${P}`
+	? T
+	: never;
 ```
 
 Extracts from a union of strings those that end with a given suffix.
 
 ### ExtractIfContains
 
-```ts
-type ExtractIfContains<T, P> = ...
+```ts tab='Shape'
+type ExtractIfContains<
+	T extends string,
+	P extends string,
+>
+```
+
+```ts tab='Source'
+type ExtractIfContains<
+	T extends string,
+	P extends string,
+> = T extends `${string}${P}${string}` ? T : never;
 ```
 
 Extracts from a union of strings those that contain a given substring.
 
 ### ExcludeIfStartsWith
 
-```ts
-type ExcludeIfStartsWith<T, S> = ...
+```ts tab='Shape'
+type ExcludeIfStartsWith<T extends string, S extends string>
+```
+
+```ts tab='Source'
+type ExcludeIfStartsWith<T extends string, S extends string> = T extends `${S}${string}`
+	? never
+	: T;
 ```
 
 Excludes from a union of strings those that start with a given prefix.
 
 ### ExcludeIfEndsWith
 
-```ts
-type ExcludeIfEndsWith<T, S> = ...
+```ts tab='Shape'
+type ExcludeIfEndsWith<T extends string, S extends string>
+```
+
+```ts tab='Source'
+type ExcludeIfEndsWith<T extends string, S extends string> = T extends `${string}${S}`
+	? never
+	: T;
 ```
 
 Excludes from a union of strings those that end with a given suffix.
 
 ### ExcludeIfContains
 
-```ts
-type ExcludeIfContains<T, S> = ...
+```ts tab='Shape'
+type ExcludeIfContains<
+	T extends string,
+	S extends string,
+>
+```
+
+```ts tab='Source'
+type ExcludeIfContains<
+	T extends string,
+	S extends string,
+> = T extends `${string}${S}${string}` ? never : T;
 ```
 
 Excludes from a union of strings those that contain a given substring.
@@ -62,16 +106,30 @@ Excludes from a union of strings those that contain a given substring.
 
 ### FirstChar
 
-```ts
-type FirstChar<T> = ...
+```ts tab='Shape'
+type FirstChar<T extends string>
+```
+
+```ts tab='Source'
+type FirstChar<T extends string> = T extends `${infer U extends string}${string}`
+	? U
+	: never;
 ```
 
 Returns the first character in a given string.
 
 ### LastChar
 
-```ts
-type LastChar<T> = ...
+```ts tab='Shape'
+type LastChar<T extends string>
+```
+
+```ts tab='Source'
+type LastChar<T extends string> = T extends `${string}${infer U extends string}`
+	? U extends ""
+		? T
+		: LastChar<U>
+	: never;
 ```
 
 Returns the last character in a given string.
@@ -86,48 +144,84 @@ This type will run `T["length"]` times to reach the last character.
 
 ### Prefix
 
-```ts
-type Prefix<T, P> = ...
+```ts tab='Shape'
+type Prefix<T extends string, P extends string>
+```
+
+```ts tab='Source'
+type Prefix<T extends string, P extends string> = `${P}${T}`;
 ```
 
 Adds a prefix to a string.
 
 ### EnsurePrefix
 
-```ts
-type EnsurePrefix<T, P> = ...
+```ts tab='Shape'
+type EnsurePrefix<T extends string, P extends string>
+```
+
+```ts tab='Source'
+type EnsurePrefix<T extends string, P extends string> = T extends `${P}${string}`
+	? T
+	: Prefix<T, P>;
 ```
 
 Adds a prefix to a string, but only if the string does not already start with the prefix.
 
 ### UnPrefix
 
-```ts
-type UnPrefix<T, P> = ...
+```ts tab='Shape'
+type UnPrefix<T extends string, P extends string>
+```
+
+```ts tab='Source'
+type UnPrefix<T extends string, P extends string> = T extends `${P}${infer U extends string}`
+	? U
+	: T;
 ```
 
 Removes a prefix from a string (if it exists).
 
 ### Suffix
 
-```ts
-type Suffix<T, S> = ...
+```ts tab='Shape'
+type Suffix<T extends string, S extends string>
+```
+
+```ts tab='Source'
+type Suffix<T extends string, S extends string> = `${T}${S}`;
 ```
 
 Adds a suffix to a string.
 
 ### EnsureSuffix
 
-```ts
-type EnsureSuffix<T, S> = ...
+```ts tab='Shape'
+type EnsureSuffix<
+	T extends string,
+	S extends string,
+>
+```
+
+```ts tab='Source'
+type EnsureSuffix<
+	T extends string,
+	S extends string,
+> = T extends `${infer U extends string}${S}` ? U : Suffix<T, S>;
 ```
 
 Adds a suffix to a string, but only if the string does not already end with the suffix.
 
 ### UnSuffix
 
-```ts
-type UnSuffix<T, S> = ...
+```ts tab='Shape'
+type UnSuffix<T extends string, S extends string>
+```
+
+```ts tab='Source'
+type UnSuffix<T extends string, S extends string> = T extends `${infer U extends string}${S}`
+	? U
+	: T;
 ```
 
 Removes a suffix from a string (if it exists).
@@ -136,30 +230,57 @@ Removes a suffix from a string (if it exists).
 
 ### Split
 
-```ts
-type Split<T, S> = ...
+```ts tab='Shape'
+type Split<T extends string, S extends string>
+```
+
+```ts tab='Source'
+type Split<T extends string, S extends string> = T extends ""
+	? []
+	: T extends `${infer L}${S}${infer R}`
+		? [L, ...Split<R, S>]
+		: [T];
 ```
 
 ### Join
 
-```ts
-type Join<T, S> = ...
+```ts tab='Shape'
+type Join<T extends ROList<string>, S extends string = "">
+```
+
+```ts tab='Source'
+type Join<T extends ROList<string>, S extends string = ""> = T extends readonly [
+	infer F extends string,
+	...infer R extends ROList<string>,
+]
+	? R["length"] extends 0
+		? F
+		: `${F}${S}${Join<R, S>}`
+	: "";
 ```
 
 ## utils
 
 ### Stringable
 
-```ts
-type Stringable = ...
+```ts tab='Shape'
+type Stringable
+```
+
+```ts tab='Source'
+type Stringable = string | number | boolean | bigint | null | undefined;
 ```
 
 A type that represents values that can be converted to strings.
 
 ### Suggest
 
-```ts
-type Suggest<T> = ...
+```ts tab='Shape'
+type Suggest<T>
+```
+
+```ts tab='Source'
+type Suggest<T> = Extract<T, string> | (string & {});
 ```
 
 Generates a type that suggests a pre-defined list of choices while accepting any other string.
@@ -173,8 +294,12 @@ const f2: Fruit = "Banana"; // Valid
 
 ### Stringify
 
-```ts
-type Stringify<T> = ...
+```ts tab='Shape'
+type Stringify<T>
+```
+
+```ts tab='Source'
+type Stringify<T> = T extends Stringable ? `${T}` : never;
 ```
 
 Converts a [Stringable](#stringable) to its string representation.
@@ -186,8 +311,12 @@ type R2 = Stringify<{ a: 1 }>; // never
 
 ### Concat
 
-```ts
-type Concat<A, B, S> = ...
+```ts tab='Shape'
+type Concat<A extends string, B extends string, S extends string = "">
+```
+
+```ts tab='Source'
+type Concat<A extends string, B extends string, S extends string = ""> = `${A}${S}${B}`;
 ```
 
 Concatenates two strings with an optional separator.

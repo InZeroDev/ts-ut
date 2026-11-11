@@ -6,8 +6,18 @@ title: dict
 
 ### ExtractByValue
 
-```ts
-type ExtractByValue<T, M> = ...
+```ts tab='Shape'
+type ExtractByValue<T, M extends Dict<SuggestKey<Keys<Known<T>>>>>
+```
+
+```ts tab='Source'
+type ExtractByValue<T, M extends Dict<SuggestKey<Keys<Known<T>>>>> = T extends T
+	? Values<{
+			[P in keyof M]: P extends keyof T ? HasType<T[P], M[P]> : false;
+		}> extends true
+		? T
+		: never
+	: never;
 ```
 
 Extracts union members whose specified properties contain at least one of the specified value types.
@@ -21,8 +31,18 @@ type R2 = ExtractByValue<Obj, { a: string | number }>; // { a: string } | { a: n
 
 ### ExtractByExactValue
 
-```ts
-type ExtractByExactValue<T, M> = ...
+```ts tab='Shape'
+type ExtractByExactValue<T, M extends Dict<SuggestKey<Keys<Known<T>>>>>
+```
+
+```ts tab='Source'
+type ExtractByExactValue<T, M extends Dict<SuggestKey<Keys<Known<T>>>>> = T extends T
+	? Values<{
+			[P in keyof M]: P extends keyof T ? AreEqual<T[P], M[P]> : false;
+		}> extends true
+		? T
+		: never
+	: never;
 ```
 
 Extracts union members whose specified properties exactly match the specified value types.
@@ -38,28 +58,42 @@ type R2 = ExtractByExactValue<Obj, { a: string | boolean }>; // { a: string | bo
 
 ### Get
 
-```ts
-type Get<T, K> = ...
+```ts tab='Shape'
+type Get<T, K extends SuggestKey<Keys<Known<T>>>>
+```
+
+```ts tab='Source'
+type Get<T, K extends SuggestKey<Keys<Known<T>>>> = T extends T
+	? K extends keyof T
+		? T[K]
+		: never
+	: never;
 ```
 
 An alias for `Obj['Key']`.
 
 ```ts title='Example'
-type R1 = Get<{ a: 1; b: 2 }, "a">; // 1
+type R1 = Get<{ a: 1, b: 2 }, 'a'>; // 1
 ```
 
 ### Set
 
-```ts
-type Set<T, K, V> = ...
+```ts tab='Shape'
+type Set<T, K extends SuggestKey<Keys<Known<T>>>, V>
+```
+
+```ts tab='Source'
+type Set<T, K extends SuggestKey<Keys<Known<T>>>, V> = T extends T
+	? Prettify<{ [P in K]: V } & { [P in keyof T]: P extends K ? V : T[P] }>
+	: never;
 ```
 
 Set a value in an object.
 
 ```ts title='Example'
-type R1 = Set<{ readonly c?: 1 }, "c", 4>; // { readonly c?: 4 }
+type R1 = Set<{ readonly c?: 1 }, 'c', 4>; // { readonly c?: 4 }
 
-type R2 = Set<{ a: 1 }, "b", 2>; // { a: 1, b: 2 }
+type R2 = Set<{ a: 1 }, 'b', 2>; // { a: 1, b: 2 }
 ```
 
 <Callout type='info'>
@@ -70,8 +104,26 @@ If the key doesn't exist, it will be added.
 
 ### GetDeep
 
-```ts
-type GetDeep<T, K, O> = ...
+```ts tab='Shape'
+type GetDeep<
+	T,
+	K extends SuggestKey<KeysDeep<Known<T>>, true>,
+	O extends boolean = false,
+>
+```
+
+```ts tab='Source'
+type GetDeep<
+	T,
+	K extends SuggestKey<KeysDeep<Known<T>>, true>,
+	O extends boolean = false,
+> = T extends T
+	? K extends K
+		? Next<K> extends [infer N extends string, infer R]
+			? _GetDeep<T, N, R, O>
+			: never
+		: never
+	: never;
 ```
 
 Get a deeply nested value using dot-notation.
@@ -79,8 +131,8 @@ Get a deeply nested value using dot-notation.
 ```ts title='Example'
 type Obj = { a: { b?: { c: 1 } } };
 
-type R1 = GetDeep<Obj, "a.b.c">; // 1
-type R2 = GetDeep<Obj, "a.b.c", true>; // 1 | undefined
+type R1 = GetDeep<Obj, 'a.b.c'>; // 1
+type R2 = GetDeep<Obj, 'a.b.c', true>; // 1 | undefined
 ```
 
 <Callout type='info'>
@@ -91,17 +143,27 @@ Set `O` to `true` to preserve `undefined` if one of the parents is optional.
 
 ### SetDeep
 
-```ts
-type SetDeep<T, K, V> = ...
+```ts tab='Shape'
+type SetDeep<T, K extends SuggestKey<KeysDeep<Known<T>>, true>, V>
+```
+
+```ts tab='Source'
+type SetDeep<T, K extends SuggestKey<KeysDeep<Known<T>>, true>, V> = T extends T
+	? K extends K
+		? Next<K> extends [infer N extends string, infer R]
+			? Prettify<_SetDeep<Merge<{ [P in N]: IsNever<R> extends true ? V : {} }, T>, N, R, V>>
+			: never
+		: never
+	: never;
 ```
 
 Set a deeply nested value using dot-notation.
 
 ```ts title='Example'
-type R1 = SetDeep<{ a: { b: { c: 1 } } }, "a.b.c", 4>; // { a: { b: { c: 4 } } }
+type R1 = SetDeep<{ a: { b: { c: 1 } } }, 'a.b.c', 4>; // { a: { b: { c: 4 } } }
 
-type R2 = SetDeep<{}, "a.b.c", 4>; // { a: { b: { c: 4 } } }
-type R3 = SetDeep<{ a: boolean }, "a.b.c", 4>; // { a: boolean }
+type R2 = SetDeep<{}, 'a.b.c', 4>; // { a: { b: { c: 4 } } }
+type R3 = SetDeep<{ a: boolean }, 'a.b.c', 4>; // { a: boolean }
 ```
 
 <Callout type='info'>
@@ -115,14 +177,18 @@ type R3 = SetDeep<{ a: boolean }, "a.b.c", 4>; // { a: boolean }
 
 ### Keys
 
-```ts
-type Keys<T> = ...
+```ts tab='Shape'
+type Keys<T>
+```
+
+```ts tab='Source'
+type Keys<T> = T extends T ? keyof T : never;
 ```
 
 Returns all possible keys.
 
 ```ts title='Example'
-type Config = { foo: string; bar: number } | { c: 4 };
+type Config = { foo: string, bar: number } | { c: 4 };
 
 type R1 = keyof Config; // never
 type R2 = Keys<Config>; // 'foo' | 'bar' | 'c'
@@ -130,8 +196,12 @@ type R2 = Keys<Config>; // 'foo' | 'bar' | 'c'
 
 ### Values
 
-```ts
-type Values<T> = ...
+```ts tab='Shape'
+type Values<T>
+```
+
+```ts tab='Source'
+type Values<T> = T extends T ? T[keyof T] : never;
 ```
 
 Returns all possible values.
@@ -144,32 +214,60 @@ type R1 = Values<Config>; // string | 4
 
 ### Entries
 
-```ts
-type Entries<T> = ...
+```ts tab='Shape'
+type Entries<T>
+```
+
+```ts tab='Source'
+type Entries<T> = T extends T ? [Keys<T>, Values<T>] : never;
 ```
 
 Returns all possible entries.
 
 ```ts title='Example'
-type Config = { foo: string; bar: number } | { c: 4 };
+type Config = { foo: string, bar: number } | { c: 4 };
 
 type R1 = Entries<Config>; // ["foo" | "bar", string | number] | ["c", 4]
 ```
 
 ### KeysDeep
 
-```ts
-type KeysDeep<T, R, _K> = ...
+```ts tab='Shape'
+type KeysDeep<
+	T,
+	R extends "leaf" | "parent" | "both" = "both",
+	_K extends string = "",
+>
+```
+
+```ts tab='Source'
+type KeysDeep<
+	T,
+	R extends "leaf" | "parent" | "both" = "both",
+	_K extends string = "",
+> = T extends T
+	? Values<{
+			[P in keyof T as P extends string | number ? P : never]-?: T[P] extends infer TP
+				? Next<P & (string | number), _K> extends infer N extends string
+					? TP extends Dict
+						? (R extends "leaf" ? never : N) | KeysDeep<TP, R, N>
+						: R extends "parent"
+							? never
+							: N
+					: never
+				: never;
+		}>
+	: never;
 ```
 
 A deep version of [Keys](#keys).
 
 ```ts title='Example'
-type Config = { foo: string; bar: { baz: number } };
+type Config = { foo: string, bar: { baz: number } };
 
-type R1 = KeysDeep<Config>; // "foo" | "bar" | "bar.baz"
-type R2 = KeysDeep<Config, "leaf">; // "foo" | "bar.baz"
-type R3 = KeysDeep<Config, "parent">; // "bar"
+type R1 = KeysDeep<Config> // "foo" | "bar" | "bar.baz"
+type R2 = KeysDeep<Config, "leaf"> // "foo" | "bar.baz"
+type R3 = KeysDeep<Config, "parent"> // "bar"
 ```
 
 <Callout type='info'>
@@ -180,78 +278,160 @@ type R3 = KeysDeep<Config, "parent">; // "bar"
 
 ### KeysOfType
 
-```ts
-type KeysOfType<T, U> = ...
+```ts tab='Shape'
+type KeysOfType<T, U>
+```
+
+```ts tab='Source'
+type KeysOfType<T, U> = T extends T
+	? keyof {
+			[P in keyof T as T[P] extends U ? P : never]: T[P];
+		}
+	: never;
 ```
 
 Returns the keys of `T` whose values are assignable to `U`.
 
 ```ts title='Example'
-type R1 = KeyofType<{ a: 1; b: "b"; c: 4 }, number>; // "a" | "c"
-type R2 = KeyofType<{ a: 1; [x: string]: number }, number>; // string | number
+type R1 = KeyofType<{ a: 1, b: "b", c: 4 }, number>; // "a" | "c"
+type R2 = KeyofType<{ a: 1, [x: string]: number }, number>; // string | number
 ```
 
-### KeysContainingType
+### KeysWithType
 
-```ts
-type KeysContainingType<T, U> = ...
+```ts tab='Shape'
+type KeysWithType<T, U>
+```
+
+```ts tab='Source'
+type KeysWithType<T, U> = T extends T
+	? keyof {
+			[P in keyof T as HasType<T[P], U> extends true ? P : never]: T[P];
+		}
+	: never;
 ```
 
 Returns the keys of `T` whose values have one of the types in `U`.
 
 ```ts title='Example'
-type Obj = { a: number; b: boolean | number };
+type Obj = { a: number, b: boolean | number };
 
 type R1 = KeysOfType<Obj, number>; // "a"
 type R2 = KeysWithType<Obj, number>; // "a" | "b"
 ```
 
-### KeysOfExactType
+### KeysWithExactType
 
-```ts
-type KeysOfExactType<T, U> = ...
+```ts tab='Shape'
+type KeysWithExactType<T, U>
+```
+
+```ts tab='Source'
+type KeysWithExactType<T, U> = T extends T
+	? keyof {
+			[P in keyof T as AreEqual<T[P], U> extends true ? P : never]: T[P];
+		}
+	: never;
 ```
 
 ### KeysOfTypeDeep
 
-```ts
-type KeysOfTypeDeep<T, U, _K> = ...
+```ts tab='Shape'
+type KeysOfTypeDeep<T, U, _K extends string = "">
+```
+
+```ts tab='Source'
+type KeysOfTypeDeep<T, U, _K extends string = ""> = T extends T
+	? Values<{
+			[
+				P in keyof T as T[P] extends U ? P : HasType<T[P], Dict> extends true ? P : never
+			]-?: T[P] extends infer TK
+				? Next<P & string, _K> extends infer N extends string
+					? HasType<TK, Dict> extends true
+						? KeysOfTypeDeep<Extract<TK, Dict>, U, N>
+						: N
+					: never
+				: never;
+		}>
+	: never;
 ```
 
 A deep version of [KeysOfType](#keysoftype).
 
 ```ts title='Example'
-type Config = { foo: string; bar: { baz: number } };
+type Config = { foo: string, bar: { baz: number } };
 
-type R1 = KeysOfTypeDeep<Config, string>; // "foo"
-type R2 = KeysOfTypeDeep<Config, number>; // "bar.baz"
+type R1 = KeysOfTypeDeep<Config, string> // "foo"
+type R2 = KeysOfTypeDeep<Config, number> // "bar.baz"
 ```
 
-### KeysContainingTypeDeep
+### KeysWithTypeDeep
 
-```ts
-type KeysContainingTypeDeep<T, U, _K> = ...
+```ts tab='Shape'
+type KeysWithTypeDeep<T, U, _K extends string = "">
 ```
 
-### KeysOfExactTypeDeep
+```ts tab='Source'
+type KeysWithTypeDeep<T, U, _K extends string = ""> = T extends T
+	? Values<{
+			[P in keyof T as HasType<T[P], U | Dict> extends true ? P : never]-?: T[P] extends infer TK
+				? Next<P & string, _K> extends infer N extends string
+					? HasType<TK, Dict> extends true
+						? KeysWithTypeDeep<Extract<TK, Dict>, U, N>
+						: N
+					: never
+				: never;
+		}>
+	: never;
+```
 
-```ts
-type KeysOfExactTypeDeep<T, U, _K> = ...
+### KeysWithExactTypeDeep
+
+```ts tab='Shape'
+type KeysWithExactTypeDeep<T, U, _K extends string = "">
+```
+
+```ts tab='Source'
+type KeysWithExactTypeDeep<T, U, _K extends string = ""> = T extends T
+	? Values<{
+			[
+				P in keyof T as AreEqual<T[P], U> extends true
+					? P
+					: HasType<T[P], Dict> extends true
+						? P
+						: never
+			]-?: T[P] extends infer TK
+				? Next<P & string, _K> extends infer N extends string
+					? HasType<TK, Dict> extends true
+						? KeysWithExactTypeDeep<Extract<TK, Dict>, U, N>
+						: N
+					: never
+				: never;
+		}>
+	: never;
 ```
 
 ## merge
 
 ### MergeUnion
 
-```ts
-type MergeUnion<A, B, P> = ...
+```ts tab='Shape'
+type MergeUnion<A, B, P extends boolean = false>
+```
+
+```ts tab='Source'
+type MergeUnion<A, B, P extends boolean = false> = A extends A
+	? B extends B
+		? Prettify<P extends true ? _MergeUnionPreserve<A, B> : _MergeUnion<A, B>>
+		: never
+	: never;
 ```
 
 Merge two objects, keeping all keys from both. On conflict, `B` wins.
 
 ```ts title='Example'
-type A = { readonly a: 1; b: 2 };
-type B = { a: "<>"; c: 4 };
+type A = { readonly a: 1, b: 2 };
+type B = { a: "<>", c: 4 };
 
 type AB1 = MergeUnion<A, B>; // { a: "<>", b: 2, c: 4 }
 type AB2 = MergeUnion<A, B, true>; // { readonly a: "<>", b: 2, c: 4 }
@@ -265,15 +445,23 @@ Set `P` to true to use `A`'s modifiers.
 
 ### MergeUnionDeep
 
-```ts
-type MergeUnionDeep<A, B, P> = ...
+```ts tab='Shape'
+type MergeUnionDeep<A, B, P extends boolean = false>
+```
+
+```ts tab='Source'
+type MergeUnionDeep<A, B, P extends boolean = false> = A extends A
+	? B extends B
+		? PrettifyDeep<P extends true ? _MergeUnionDeepPreserve<A, B> : _MergeUnionDeep<A, B>>
+		: never
+	: never;
 ```
 
 Merge two objects deeply, keeping all keys from both. On conflict, values are recursively merged if both are objects, otherwise `B` wins.
 
 ```ts title='Example'
-type A = { readonly a: 1; b: { c: 1; d: "b" } };
-type B = { a: 99; b: { c: 4 } };
+type A = { readonly a: 1, b: { c: 1, d: "b" } };
+type B = { a: 99, b: { c: 4 } };
 
 type AB1 = MergeUnion<A, B>; // { a: 99, b: { c: 4 } }
 type AB2 = MergeUnionDeep<A, B>; // { a: 99, b: { c: 4, d: "b" } }
@@ -288,15 +476,23 @@ type AB2 = MergeUnionDeep<A, B>; // { a: 99, b: { c: 4, d: "b" } }
 
 ### MergePatch
 
-```ts
-type MergePatch<A, B, P> = ...
+```ts tab='Shape'
+type MergePatch<A, B, P extends boolean = false>
+```
+
+```ts tab='Source'
+type MergePatch<A, B, P extends boolean = false> = A extends A
+	? B extends B
+		? Prettify<P extends true ? _MergePatchPreserve<A, B> : _MergePatch<A, B>>
+		: never
+	: never;
 ```
 
 Merge two objects, keeping all keys from `A`. On conflict, `B` wins.
 
 ```ts title='Example'
-type A = { readonly a: 1; b: 2 };
-type B = { a: "<>"; extra: "ignored" };
+type A = { readonly a: 1, b: 2 };
+type B = { a: "<>", extra: "ignored" };
 
 type AB1 = MergePatch<A, B>; // { a: "<>", b: 2 }
 type AB2 = MergePatch<A, B, true>; // { readonly a: "<>", b: 2 }
@@ -310,15 +506,23 @@ Set `P` to true to use `A`'s modifiers.
 
 ### MergePatchDeep
 
-```ts
-type MergePatchDeep<A, B, P> = ...
+```ts tab='Shape'
+type MergePatchDeep<A, B, P extends boolean = false>
+```
+
+```ts tab='Source'
+type MergePatchDeep<A, B, P extends boolean = false> = A extends A
+	? B extends B
+		? PrettifyDeep<P extends true ? _MergePatchDeepPreserve<A, B> : _MergePatchDeep<A, B>>
+		: never
+	: never;
 ```
 
 Merge two objects deeply, keeping all keys from `A`. On conflict, values are recursively merged if both are objects, otherwise `B` wins.
 
 ```ts title='Example'
-type A = { a: 1; b: { c: 1; d: "b" } };
-type B = { a: 99; extra: "key"; b: { c: 4; extra: "key" } };
+type A = { a: 1, b: { c: 1, d: "b" } };
+type B = { a: 99, extra: "key", b: { c: 4, extra: "key" } };
 
 type AB1 = MergePatch<A, B>; // { a: 99, b: { c: 4, extra: "key" } }
 type AB2 = MergePatchDeep<A, B>; // { a: 99, b: { c: 4, d: "b" } }
@@ -333,15 +537,23 @@ type AB2 = MergePatchDeep<A, B>; // { a: 99, b: { c: 4, d: "b" } }
 
 ### MergeInt
 
-```ts
-type MergeInt<A, B, P> = ...
+```ts tab='Shape'
+type MergeInt<A, B, P extends boolean = false>
+```
+
+```ts tab='Source'
+type MergeInt<A, B, P extends boolean = false> = A extends A
+	? B extends B
+		? Prettify<P extends true ? _MergeIntPreserve<A, B> : _MergeInt<A, B>>
+		: never
+	: never;
 ```
 
 Merge two objects, keeping all keys from `A` that exist in `B`. Values are taken from `B`.
 
 ```ts title='Example'
-type A = { readonly a: 1; b: 2 };
-type B = { a: "<>"; c: 4 };
+type A = { readonly a: 1, b: 2 };
+type B = { a: "<>", c: 4 };
 
 type AB1 = MergeInt<A, B>; // { a: "<>" }
 type AB2 = MergeInt<A, B, true>; // { readonly a: "<>" }
@@ -355,15 +567,23 @@ Set `P` to true to use `A`'s modifiers.
 
 ### MergeIntDeep
 
-```ts
-type MergeIntDeep<A, B, P> = ...
+```ts tab='Shape'
+type MergeIntDeep<A, B, P extends boolean = false>
+```
+
+```ts tab='Source'
+type MergeIntDeep<A, B, P extends boolean = false> = A extends A
+	? B extends B
+		? PrettifyDeep<P extends true ? _MergeIntDeepPreserve<A, B> : _MergeIntDeep<A, B>>
+		: never
+	: never;
 ```
 
 Merge two objects deeply, keeping all keys from `A` that exist in `B`. Values are recursively merged if both are objects, otherwise they are taken from `B`.
 
 ```ts title='Example'
-type A = { a: 1; b: { c: 1; d: "b" } };
-type B = { a: 9; b: { c: 4 } };
+type A = { a: 1, b: { c: 1, d: "b" } };
+type B = { a: 9, b: { c: 4 } };
 
 type AB1 = MergeInt<A, B>; // { a: 9, b: { c: 4 } }
 type AB2 = MergeIntDeep<A, B>; // { a: 9, b: { c: 4, d: "b" } }
@@ -378,15 +598,25 @@ type AB2 = MergeIntDeep<A, B>; // { a: 9, b: { c: 4, d: "b" } }
 
 ### MergeDiff
 
-```ts
-type MergeDiff<A, B> = ...
+```ts tab='Shape'
+type MergeDiff<A, B>
+```
+
+```ts tab='Source'
+type MergeDiff<A, B> = A extends A
+	? B extends B
+		? {
+				[P in keyof A as P extends keyof B ? never : P]: A[P];
+			}
+		: never
+	: never;
 ```
 
 Merge two objects, keeping all keys that exist only in `A`.
 
 ```ts title='Example'
-type A = { readonly a: 1; b: 2 };
-type B = { a: "<>"; c: 4 };
+type A = { readonly a: 1, b: 2 };
+type B = { a: "<>", c: 4 };
 
 type AB = MergeDiff<A, B>; // { b: 2 }
 type BA = MergeDiff<B, A>; // { c: 4 }
@@ -394,14 +624,30 @@ type BA = MergeDiff<B, A>; // { c: 4 }
 
 ### MergeDiffDeep
 
-```ts
-type MergeDiffDeep<A, B> = ...
+```ts tab='Shape'
+type MergeDiffDeep<A, B>
+```
+
+```ts tab='Source'
+type MergeDiffDeep<A, B> = A extends A
+	? B extends B
+		? {
+				[
+					P in keyof A as P extends keyof B ? (HasType<B[P], Dict> extends true ? P : never) : P
+				]: P extends keyof B
+					? HasType<B[P], Dict> | HasType<A[P], Dict> extends true
+						? MergeDiffDeep<A[P], B[P]>
+						: A[P]
+					: A[P];
+			}
+		: never
+	: never;
 ```
 
 Merge two objects deeply, keeping all keys that exist only in `A` and recursively merging keys that exist in both when both values are objects.
 
 ```ts title='Example'
-type A = { a: 1; b: { c: 1; d: "b" } };
+type A = { a: 1, b: { c: 1, d: "b" } };
 type B = { b: { d: "b" } };
 
 type AB1 = MergeDiff<A, B>; // { a: 1 }
@@ -410,15 +656,23 @@ type AB2 = MergeDiffDeep<A, B>; // { a: 1, b: { c: 1 } }
 
 ### MergeSymDiff
 
-```ts
-type MergeSymDiff<A, B> = ...
+```ts tab='Shape'
+type MergeSymDiff<A, B>
+```
+
+```ts tab='Source'
+type MergeSymDiff<A, B> = A extends A
+	? B extends B
+		? Prettify<MergeDiff<A, B> & MergeDiff<B, A>>
+		: never
+	: never;
 ```
 
 Merge two objects, keeping all non-shared keys.
 
 ```ts title='Example'
-type A = { readonly a: 1; b: 2 };
-type B = { a: "<>"; c: 4 };
+type A = { readonly a: 1, b: 2 };
+type B = { a: "<>", c: 4 };
 
 type AB = MergeSymDiff<A, B>; // { b: 2, c: 4 }
 type BA = AB;
@@ -426,14 +680,22 @@ type BA = AB;
 
 ### MergeSymDiffDeep
 
-```ts
-type MergeSymDiffDeep<A, B> = ...
+```ts tab='Shape'
+type MergeSymDiffDeep<A, B>
+```
+
+```ts tab='Source'
+type MergeSymDiffDeep<A, B> = A extends A
+	? B extends B
+		? PrettifyDeep<MergeDiffDeep<A, B> & MergeDiffDeep<B, A>>
+		: never
+	: never;
 ```
 
 Merge two objects deeply, keeping all non-shared keys and recursively merges shared keys when both are objects.
 
 ```ts title='Example'
-type A = { a: 1; b: { c: 1; d: "b" } };
+type A = { a: 1, b: { c: 1, d: "b" } };
 type B = { b: { d: "b" } };
 
 type AB1 = MergeDiff<A, B>; // { a: 1 }
@@ -442,8 +704,52 @@ type AB2 = MergeDiffDeep<A, B>; // { a: 1, b: { c: 1 } }
 
 ### Merge
 
-```ts
-type Merge<A, B, M> = ...
+```ts tab='Shape'
+type Merge<
+	A,
+	B,
+	M extends
+		| "int"
+		| "int-preserve"
+		| "union"
+		| "union-preserve"
+		| "patch"
+		| "patch-preserve"
+		| "diff"
+		| "sym-diff" = "union",
+>
+```
+
+```ts tab='Source'
+type Merge<
+	A,
+	B,
+	M extends
+		| "int"
+		| "int-preserve"
+		| "union"
+		| "union-preserve"
+		| "patch"
+		| "patch-preserve"
+		| "diff"
+		| "sym-diff" = "union",
+> = M extends "int"
+	? MergeInt<A, B>
+	: M extends "int-preserve"
+		? MergeInt<A, B, true>
+		: M extends "union"
+			? MergeUnion<A, B>
+			: M extends "union-preserve"
+				? MergeUnion<A, B, true>
+				: M extends "patch"
+					? MergePatch<A, B>
+					: M extends "patch-preserve"
+						? MergePatch<A, B, true>
+						: M extends "diff"
+							? MergeDiff<A, B>
+							: M extends "sym-diff"
+								? MergeSymDiff<A, B>
+								: never;
 ```
 
 Merge two objects using the given method. (default: "union")
@@ -456,8 +762,52 @@ See [MergeUnion](#mergeunion), [MergePatch](#mergepatch), [MergeInt](#mergeint),
 
 ### MergeDeep
 
-```ts
-type MergeDeep<A, B, M> = ...
+```ts tab='Shape'
+type MergeDeep<
+	A,
+	B,
+	M extends
+		| "patch"
+		| "patch-preserve"
+		| "union"
+		| "union-preserve"
+		| "int"
+		| "int-preserve"
+		| "diff"
+		| "sym-diff" = "union",
+>
+```
+
+```ts tab='Source'
+type MergeDeep<
+	A,
+	B,
+	M extends
+		| "patch"
+		| "patch-preserve"
+		| "union"
+		| "union-preserve"
+		| "int"
+		| "int-preserve"
+		| "diff"
+		| "sym-diff" = "union",
+> = M extends "int"
+	? MergeIntDeep<A, B>
+	: M extends "int-preserve"
+		? MergeIntDeep<A, B, true>
+		: M extends "union"
+			? MergeUnionDeep<A, B>
+			: M extends "union-deep"
+				? MergeUnionDeep<A, B, true>
+				: M extends "patch"
+					? MergePatchDeep<A, B>
+					: M extends "patch-preserve"
+						? MergePatchDeep<A, B, true>
+						: M extends "diff"
+							? MergeDiffDeep<A, B>
+							: M extends "sym-diff"
+								? MergeSymDiffDeep<A, B>
+								: never;
 ```
 
 Merge two objects deeply using the specified method. (default: "union")
@@ -472,72 +822,134 @@ See [MergeUnionDeep](#mergeuniondeep), [MergePatchDeep](#mergepatchdeep), [Merge
 
 ### Mutable
 
-```ts
-type Mutable<T> = ...
+```ts tab='Shape'
+type Mutable<T>
+```
+
+```ts tab='Source'
+type Mutable<T> = {
+	-readonly [P in keyof T]: T[P];
+};
 ```
 
 Makes all properties of `T` mutable.
 
 ### RequiredDeep
 
-```ts
-type RequiredDeep<T> = ...
+```ts tab='Shape'
+type RequiredDeep<T>
+```
+
+```ts tab='Source'
+type RequiredDeep<T> = {
+	[P in keyof T]-?: RequiredDeep<T[P]>;
+};
 ```
 
 Makes all properties of `T` required (deep).
 
 ### PartialDeep
 
-```ts
-type PartialDeep<T> = ...
+```ts tab='Shape'
+type PartialDeep<T>
+```
+
+```ts tab='Source'
+type PartialDeep<T> = {
+	[P in keyof T]?: PartialDeep<T[P]>;
+};
 ```
 
 Makes all properties of `T` optional (deep).
 
 ### ReadonlyDeep
 
-```ts
-type ReadonlyDeep<T> = ...
+```ts tab='Shape'
+type ReadonlyDeep<T>
+```
+
+```ts tab='Source'
+type ReadonlyDeep<T> = {
+	readonly [P in keyof T]: ReadonlyDeep<T[P]>;
+};
 ```
 
 Makes all properties of `T` readonly (deep).
 
 ### MutableDeep
 
-```ts
-type MutableDeep<T> = ...
+```ts tab='Shape'
+type MutableDeep<T>
+```
+
+```ts tab='Source'
+type MutableDeep<T> = {
+	-readonly [P in keyof T]: MutableDeep<T[P]>;
+};
 ```
 
 Makes all properties of `T` mutable (deep).
 
 ### RequiredKey
 
-```ts
-type RequiredKey<T, K> = ...
+```ts tab='Shape'
+type RequiredKey<T, K extends Keys<Known<T>>>
+```
+
+```ts tab='Source'
+type RequiredKey<T, K extends Keys<Known<T>>> = Prettify<
+	{
+		[P in keyof T as P extends K ? P : never]-?: T[P];
+	} & LooseOmit<T, K>
+>;
 ```
 
 Makes a property of `T` required.
 
 ### PartialKey
 
-```ts
-type PartialKey<T, K> = ...
+```ts tab='Shape'
+type PartialKey<T, K extends Keys<Known<T>>>
+```
+
+```ts tab='Source'
+type PartialKey<T, K extends Keys<Known<T>>> = Prettify<
+	{
+		[P in keyof T as P extends K ? P : never]?: T[P];
+	} & LooseOmit<T, K>
+>;
 ```
 
 Makes a property of `T` optional.
 
 ### ReadonlyKey
 
-```ts
-type ReadonlyKey<T, K> = ...
+```ts tab='Shape'
+type ReadonlyKey<T, K extends Keys<Known<T>>>
+```
+
+```ts tab='Source'
+type ReadonlyKey<T, K extends Keys<Known<T>>> = Prettify<
+	{
+		readonly [P in keyof T as P extends K ? P : never]: T[P];
+	} & LooseOmit<T, K>
+>;
 ```
 
 Makes a property of `T` readonly.
 
 ### MutableKey
 
-```ts
-type MutableKey<T, K> = ...
+```ts tab='Shape'
+type MutableKey<T, K extends Keys<Known<T>>>
+```
+
+```ts tab='Source'
+type MutableKey<T, K extends Keys<Known<T>>> = Prettify<
+	{
+		-readonly [P in keyof T as P extends K ? P : never]: T[P];
+	} & LooseOmit<T, K>
+>;
 ```
 
 Makes a property of `T` mutable.
@@ -546,108 +958,168 @@ Makes a property of `T` mutable.
 
 ### LoosePick
 
-```ts
-type LoosePick<T, K> = ...
+```ts tab='Shape'
+type LoosePick<T, K extends SuggestKey<Keys<Known<T>>>>
+```
+
+```ts tab='Source'
+type LoosePick<T, K extends SuggestKey<Keys<Known<T>>>> = T extends T
+	? {
+			[P in keyof T as P extends K ? P : string extends P ? K : never]: T[P];
+		}
+	: never;
 ```
 
 A distributive/loose version of the built-in [Pick](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys).
 
 ```ts title='Example'
-type R1 = Pick<{ a: 1 }, "a" | "b">; // { a: 1, b: unknown }
-type R2 = LoosePick<{ a: 1 }, "a" | "b">; // { a: 1 }
+type R1 = Pick<{a: 1}, "a" | "b">; // { a: 1, b: unknown }
+type R2 = LoosePick<{a: 1}, "a" | "b">; // { a: 1 }
 ```
 
 ### StrictPick
 
-```ts
-type StrictPick<T, K> = ...
+```ts tab='Shape'
+type StrictPick<T, K extends Keys<T>>
+```
+
+```ts tab='Source'
+type StrictPick<T, K extends Keys<T>> = LoosePick<T, K>;
 ```
 
 A distributive version of the built-in [Pick](https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys).
 
 ```ts title='Example'
-type R1 = Pick<{ a: 1 } | { b: 2 }, "a">; // { a: unknown } // + Error
-type R2 = StrictPick<{ a: 1 } | { b: 2 }, "a">; // { a: 1 } | {}
+type R1 = Pick<{a: 1} | {b: 2}, "a">; // { a: unknown } // + Error
+type R2 = StrictPick<{a: 1} | {b: 2}, "a">; // { a: 1 } | {}
 ```
 
 ### LooseOmit
 
-```ts
-type LooseOmit<T, K> = ...
+```ts tab='Shape'
+type LooseOmit<T, K extends SuggestKey<Keys<Known<T>>>>
+```
+
+```ts tab='Source'
+type LooseOmit<T, K extends SuggestKey<Keys<Known<T>>>> = T extends T
+	? {
+			[P in keyof T as P extends K ? never : P]: T[P];
+		}
+	: never;
 ```
 
 A distributive version of the built-in [Omit](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
 
 ```ts title='Example'
-type R1 = Omit<{ a: 1; b: 2 }, "a">; // { b: 2 }
-type R2 = LooseOmit<{ a: 1; b: 2 }, "a">; // { b: 2 } // + Auto-completion for 'a'
+type R1 = Omit<{a: 1, b: 2}, "a">; // { b: 2 }
+type R2 = LooseOmit<{a: 1, b: 2}, "a">; // { b: 2 } // + Auto-completion for 'a'
 
-type R3 = Omit<{ a: 1 } | { b: 2 }, "a">; // {}
-type R4 = LooseOmit<{ a: 1 } | { b: 2 }, "a">; // {} | {b: 2}
+type R3 = Omit<{a: 1} | {b: 2}, "a">; // {}
+type R4 = LooseOmit<{a: 1} | {b: 2}, "a">; // {} | {b: 2}
 ```
 
 ### StrictOmit
 
-```ts
-type StrictOmit<T, K> = ...
+```ts tab='Shape'
+type StrictOmit<T, K extends Keys<T>>
+```
+
+```ts tab='Source'
+type StrictOmit<T, K extends Keys<T>> = LooseOmit<T, K>;
 ```
 
 A distributive/strict version of the built-in [Omit](https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys).
 
 ```ts title='Example'
-type R1 = Omit<{ a: 1 }, "z">; // {a: 1}
-type R2 = StrictOmit<{ a: 1 }, "z">; // {a: 1} // + Error saying 'z' is not an existing key
+type R1 = Omit<{a: 1}, "z">; // {a: 1}
+type R2 = StrictOmit<{a: 1}, "z">; // {a: 1} // + Error saying 'z' is not an existing key
 
-type R3 = Omit<{ a: 1 } | { b: 2 }, "a">; // {} // + Error
-type R4 = StrictOmit<{ a: 1 } | { b: 2 }, "a">; // {} | {b: 2}
+type R3 = Omit<{a: 1} | {b: 2}, "a">; // {} // + Error
+type R4 = StrictOmit<{a: 1} | {b: 2}, "a">; // {} | {b: 2}
 ```
 
 ## prefix
 
 ### PrefixKeys
 
-```ts
-type PrefixKeys<T, P> = ...
+```ts tab='Shape'
+type PrefixKeys<T, P extends string>
+```
+
+```ts tab='Source'
+type PrefixKeys<T, P extends string> = {
+	[K in keyof T as K extends string ? Prefix<K, P> : K]: T[K];
+};
 ```
 
 Adds a prefix to all keys of `T`.
 
 ### PrefixKeysEnsure
 
-```ts
-type PrefixKeysEnsure<T, P> = ...
+```ts tab='Shape'
+type PrefixKeysEnsure<T, P extends string>
+```
+
+```ts tab='Source'
+type PrefixKeysEnsure<T, P extends string> = {
+	[K in keyof T as K extends string ? EnsurePrefix<K, P> : K]: T[K];
+};
 ```
 
 Adds a prefix to all keys of `T`, but only if the key does not already start with the prefix.
 
 ### UnPrefixKeys
 
-```ts
-type UnPrefixKeys<T, P> = ...
+```ts tab='Shape'
+type UnPrefixKeys<T, P extends string>
+```
+
+```ts tab='Source'
+type UnPrefixKeys<T, P extends string> = {
+	[K in keyof T as K extends string ? UnPrefix<K, P> : K]: T[K];
+};
 ```
 
 Removes a prefix from all keys of `T`, if it exists.
 
 ### SuffixKeys
 
-```ts
-type SuffixKeys<T, S> = ...
+```ts tab='Shape'
+type SuffixKeys<T, S extends string>
+```
+
+```ts tab='Source'
+type SuffixKeys<T, S extends string> = {
+	[K in keyof T as K extends string ? Suffix<K, S> : K]: T[K];
+};
 ```
 
 Adds a suffix to all keys of `T`.
 
 ### SuffixKeysEnsure
 
-```ts
-type SuffixKeysEnsure<T, S> = ...
+```ts tab='Shape'
+type SuffixKeysEnsure<T, S extends string>
+```
+
+```ts tab='Source'
+type SuffixKeysEnsure<T, S extends string> = {
+	[K in keyof T as K extends string ? EnsureSuffix<K, S> : K]: T[K];
+};
 ```
 
 Adds a suffix to all keys of `T`, but only if the key does not already end with the suffix.
 
 ### UnSuffixKeys
 
-```ts
-type UnSuffixKeys<T, S> = ...
+```ts tab='Shape'
+type UnSuffixKeys<T, S extends string>
+```
+
+```ts tab='Source'
+type UnSuffixKeys<T, S extends string> = {
+	[K in keyof T as K extends string ? UnSuffix<K, S> : K]: T[K];
+};
 ```
 
 Removes a suffix from all keys of `T`, if it exists.
@@ -656,71 +1128,112 @@ Removes a suffix from all keys of `T`, if it exists.
 
 ### RenameKey
 
-```ts
-type RenameKey<T, K, N> = ...
+```ts tab='Shape'
+type RenameKey<T, K extends Keys<Known<T>>, N extends DictKey>
+```
+
+```ts tab='Source'
+type RenameKey<T, K extends Keys<Known<T>>, N extends DictKey> = T extends T
+	? {
+			[P in keyof T as P extends K ? N : P]: T[P];
+		}
+	: never;
 ```
 
 Renames a key of `T`.
 
 ```ts title='Example'
-type R1 = RenameKey<{ rgb: RGB; a: number }, "a", "alpha">; // { rgb: RGB, alpha: number }
+type R1 = RenameKey<{rgb: RGB, a: number}, "a", "alpha">; // { rgb: RGB, alpha: number }
 ```
 
 ### RenameKeys
 
-```ts
-type RenameKeys<T, M> = ...
+```ts tab='Shape'
+type RenameKeys<T, M extends Partial<Dict<Keys<Known<T>>, DictKey>>>
+```
+
+```ts tab='Source'
+type RenameKeys<T, M extends Partial<Dict<Keys<Known<T>>, DictKey>>> = T extends T
+	? M extends M
+		? {
+				[P in keyof T as P extends keyof M ? M[P] & DictKey : P]: T[P];
+			}
+		: never
+	: never;
 ```
 
 Renames multiple keys of `T` using a key-to-new-key object.
 
 ```ts title='Example'
-type R1 = RenameKeys<{ f: string; b: string; c: 4 }, { f: "foo"; b: "bar" }>; // { foo: string, bar: string, c: 4 }
+type R1 = RenameKeys<{f: string, b: string, c: 4}, {f: "foo", b: "bar"}>; // { foo: string, bar: string, c: 4 }
 ```
 
 ## utils
 
 ### DictKey
 
-```ts
-type DictKey = ...
+```ts tab='Shape'
+type DictKey
+```
+
+```ts tab='Source'
+type DictKey = string | number | symbol;
 ```
 
 Types that can be used as keys for an object.
 
 ### Dict
 
-```ts
-type Dict<K, V> = ...
+```ts tab='Shape'
+type Dict<K extends DictKey = string, V = unknown>
+```
+
+```ts tab='Source'
+type Dict<K extends DictKey = string, V = unknown> = Record<K, V>;
 ```
 
 An alias for `Record<K, V>` with defaults.
 
 ### Known
 
-```ts
-type Known<T> = ...
+```ts tab='Shape'
+type Known<T>
+```
+
+```ts tab='Source'
+type Known<T> = T extends T
+	? { [P in keyof T as HasType<DictKey, P> extends true ? never : P]: T[P] }
+	: never;
 ```
 
 Removes the index signature from an object.
 
 ```ts title='Example'
-type Config = { foo: string; bar: boolean; [x: string]: string };
+type Config = { foo: string, bar: boolean, [x: string]: string };
 type KnownConfig = Known<Config>; // { foo: string, bar: boolean }
 ```
 
 ### SuggestKey
 
-```ts
-type SuggestKey<T, S> = ...
+```ts tab='Shape'
+type SuggestKey<T, S extends boolean = false>
+```
+
+```ts tab='Source'
+type SuggestKey<T, S extends boolean = false> =
+	Extract<T, DictKey> | (string & {}) | (number & {}) | (S extends true ? never : symbol & {});
 ```
 
 Generates a type that suggests a pre-defined list of dictionary keys while accepting any other string or number.
 
 ### Prettify
 
-```ts
-type Prettify<T> = ...
+```ts tab='Shape'
+type Prettify<T>
+```
+
+```ts tab='Source'
+type Prettify<T> = { [P in keyof T]: T[P] } & {};
 ```
 
 Prettifies an object.
@@ -732,8 +1245,14 @@ type R2 = Prettify<R1>; // { readonly a: 1 } | { readonly b: 2 }
 
 ### PrettifyDeep
 
-```ts
-type PrettifyDeep<T> = ...
+```ts tab='Shape'
+type PrettifyDeep<T>
+```
+
+```ts tab='Source'
+type PrettifyDeep<T> = {
+	[P in keyof T]: T[P] extends infer V ? (V extends Dict ? PrettifyDeep<V> : V) : never;
+} & {};
 ```
 
 A deep version of [Prettify](#prettify).

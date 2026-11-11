@@ -6,8 +6,17 @@ title: tuple
 
 ### Push
 
-```ts
-type Push<T, E, S> = ...
+```ts tab='Shape'
+type Push<T extends ROList, E, S extends boolean = false>
+```
+
+```ts tab='Source'
+type Push<T extends ROList, E, S extends boolean = false> = [
+	...Required<T>,
+	...(IsSubtype<S, true> | IsSubtype<E, ROList> extends true ? Extract<E, ROList> : [E]),
+] extends infer Result extends ROList
+	? MatchTuple<Result, T>
+	: never;
 ```
 
 Pushes an element to the end of a tuple.
@@ -25,8 +34,15 @@ The tuple's shape is preserved.
 
 ### Pop
 
-```ts
-type Pop<T, N> = ...
+```ts tab='Shape'
+type Pop<T extends ROList, N extends number = 1>
+```
+
+```ts tab='Source'
+type Pop<T extends ROList, N extends number = 1> =
+	Required<T> extends readonly [...infer Head extends ROList, ...Tuple<N>]
+		? MatchTuple<Head, T>
+		: [];
 ```
 
 Pops an element from the end of a tuple.
@@ -38,8 +54,21 @@ type R2 = Pop<[1, 2, 3?]>; // [1, 2]
 
 ### Unshift
 
-```ts
-type Unshift<T, E, S> = ...
+```ts tab='Shape'
+type Unshift<T extends ROList, E, S extends boolean = false>
+```
+
+```ts tab='Source'
+type Unshift<T extends ROList, E, S extends boolean = false> = [
+	...(IsSubtype<S, true> | IsSubtype<E, ROList> extends true ? Extract<E, ROList> : [E]),
+	...Required<T>,
+] extends infer Result extends ROList
+	? MatchTuple<
+			Result,
+			T,
+			IsSubtype<S, true> | IsTuple<E> extends true ? Extract<E, ROList>["length"] : 1
+		>
+	: never;
 ```
 
 Adds an element to the beginning of a tuple.
@@ -51,8 +80,15 @@ type R2 = Unshift<[1, 2, 3?], 4>; // [4, 1, 2, 3?]
 
 ### Shift
 
-```ts
-type Shift<T, N> = ...
+```ts tab='Shape'
+type Shift<T extends ROList, N extends number = 1>
+```
+
+```ts tab='Source'
+type Shift<T extends ROList, N extends number = 1> =
+	Required<T> extends readonly [...Tuple<N>, ...infer Rest extends ROList]
+		? MatchTuple<Rest, T, NegAbs<N>>
+		: [];
 ```
 
 Removes an element from the beginning of a tuple.
@@ -66,8 +102,12 @@ type R2 = Shift<[1, 2, 3?]>; // [2, 3?]
 
 ### Tuple
 
-```ts
-type Tuple<L, T> = ...
+```ts tab='Shape'
+type Tuple<L extends number, T = unknown>
+```
+
+```ts tab='Source'
+type Tuple<L extends number, T = unknown> = L extends L ? _Tuple<L, T> : never;
 ```
 
 Creates a tuple of the given length and parameter type.
@@ -79,16 +119,24 @@ type RGB = Tuple<3, number>; // [number, number, number]
 
 ### ROTuple
 
-```ts
-type ROTuple<L, T> = ...
+```ts tab='Shape'
+type ROTuple<L extends number = -1, T = unknown>
+```
+
+```ts tab='Source'
+type ROTuple<L extends number = -1, T = unknown> = Readonly<Tuple<L, T>>;
 ```
 
 A readonly version of [Tuple](#tuple).
 
 ### NonEmptyTuple
 
-```ts
-type NonEmptyTuple<T, L> = ...
+```ts tab='Shape'
+type NonEmptyTuple<T = unknown, L extends number = 1>
+```
+
+```ts tab='Source'
+type NonEmptyTuple<T = unknown, L extends number = 1> = [...Tuple<L, T>, ...T[]];
 ```
 
 A tuple with at least `L` elements.
@@ -101,16 +149,27 @@ type R3 = NonEmptyTuple<number, 2>; // [number, number, ...number[]]
 
 ### NonEmptyROTuple
 
-```ts
-type NonEmptyROTuple<T, L> = ...
+```ts tab='Shape'
+type NonEmptyROTuple<T = unknown, L extends number = 1>
+```
+
+```ts tab='Source'
+type NonEmptyROTuple<T = unknown, L extends number = 1> = [
+	...ROTuple<L, T>,
+	...(readonly T[]),
+];
 ```
 
 A readonly version of [NonEmptyTuple](#nonemptytuple).
 
 ### KeyofTuple
 
-```ts
-type KeyofTuple<T> = ...
+```ts tab='Shape'
+type KeyofTuple<T extends readonly unknown[]>
+```
+
+```ts tab='Source'
+type KeyofTuple<T extends readonly unknown[]> = Exclude<keyof T, keyof any[]>;
 ```
 
 Returns the indexes of a tuple.
@@ -121,8 +180,14 @@ type R1 = KeyofTuple<[1, 2, 3]>; // "0" | "1" | "2"
 
 ### KnownTuple
 
-```ts
-type KnownTuple<T> = ...
+```ts tab='Shape'
+type KnownTuple<T extends ROList>
+```
+
+```ts tab='Source'
+type KnownTuple<T extends ROList> = T extends readonly [infer F, ...infer R]
+	? [F, ...KnownTuple<R>]
+	: [];
 ```
 
 Returns the guaranteed elements of a tuple.

@@ -6,32 +6,48 @@ title: list
 
 ### List
 
-```ts
-type List<T> = ...
+```ts tab='Shape'
+type List<T = unknown>
+```
+
+```ts tab='Source'
+type List<T = unknown> = T[];
 ```
 
 An alias for `T[]`.
 
 ### ROList
 
-```ts
-type ROList<T> = ...
+```ts tab='Shape'
+type ROList<T = unknown>
+```
+
+```ts tab='Source'
+type ROList<T = unknown> = readonly T[];
 ```
 
 An alias for `readonly T[]`.
 
 ### OrList
 
-```ts
-type OrList<T> = ...
+```ts tab='Shape'
+type OrList<T = unknown>
+```
+
+```ts tab='Source'
+type OrList<T = unknown> = T | List<T>;
 ```
 
 An alias for `T | T[]`.
 
 ### OrROList
 
-```ts
-type OrROList<T> = ...
+```ts tab='Shape'
+type OrROList<T = unknown>
+```
+
+```ts tab='Source'
+type OrROList<T = unknown> = T | ROList<T>;
 ```
 
 An alias for `T | readonly T[]`.

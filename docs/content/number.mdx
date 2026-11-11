@@ -6,16 +6,30 @@ title: number
 
 ### Digit
 
-```ts
-type Digit = ...
+```ts tab='Shape'
+type Digit
+```
+
+```ts tab='Source'
+type Digit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 ```
 
 A type that represents the digits 0 through 9.
 
 ### Increment
 
-```ts
-type Increment<N, C> = ...
+```ts tab='Shape'
+type Increment<N extends number, C extends number = 1>
+```
+
+```ts tab='Source'
+type Increment<N extends number, C extends number = 1> = (
+	IsNegative<C> extends true
+		? _Decrement<Stringify<N>, Abs<Stringify<C>>>
+		: _Increment<Stringify<N>, Stringify<C>>
+) extends infer R extends string
+	? ToNumber<R>
+	: never;
 ```
 
 Increments a number by a given amount.
@@ -30,8 +44,18 @@ type R5 = Increment<-1, -1>; // -2
 
 ### Decrement
 
-```ts
-type Decrement<N, C> = ...
+```ts tab='Shape'
+type Decrement<N extends number, C extends number = 1>
+```
+
+```ts tab='Source'
+type Decrement<N extends number, C extends number = 1> = (
+	IsNegative<C> extends true
+		? _Increment<Stringify<N>, Abs<Stringify<C>>>
+		: _Decrement<Stringify<N>, Stringify<C>>
+) extends infer R extends string
+	? ToNumber<R>
+	: never;
 ```
 
 Decrements a number by a given amount.
@@ -48,8 +72,12 @@ type R5 = Decrement<-1, -1>; // 0
 
 ### ToNumber
 
-```ts
-type ToNumber<T> = ...
+```ts tab='Shape'
+type ToNumber<T extends string>
+```
+
+```ts tab='Source'
+type ToNumber<T extends string> = T extends `${infer N extends number}` ? N : never;
 ```
 
 Converts a number in string form to its number representation.

@@ -6,32 +6,48 @@ title: other
 
 ### IsUnknown
 
-```ts
-type IsUnknown<T> = ...
+```ts tab='Shape'
+type IsUnknown<T>
+```
+
+```ts tab='Source'
+type IsUnknown<T> = IsAny<T> extends true ? false : unknown extends T ? true : false;
 ```
 
 Checks if a type is `unknown`.
 
 ### IsAny
 
-```ts
-type IsAny<T> = ...
+```ts tab='Shape'
+type IsAny<T>
+```
+
+```ts tab='Source'
+type IsAny<T> = ":)" extends ":(" & T ? true : false;
 ```
 
 Checks if a type is `any`.
 
 ### IsNever
 
-```ts
-type IsNever<T> = ...
+```ts tab='Shape'
+type IsNever<T>
+```
+
+```ts tab='Source'
+type IsNever<T> = [T] extends [never] ? true : false;
 ```
 
 Checks if a type is `never`.
 
 ### IsSubtype
 
-```ts
-type IsSubtype<T, U> = ...
+```ts tab='Shape'
+type IsSubtype<T, U>
+```
+
+```ts tab='Source'
+type IsSubtype<T, U> = T extends U ? true : false;
 ```
 
 An alias for `T extends U ? true : false`.
@@ -44,7 +60,7 @@ An alias for `T extends U ? true : false`.
 
 ```ts title='Example'
 // Instead of
-type Example<A, B> = A extends Dict ? (B extends Dict ? "Do something" : never) : never;
+type Example<A, B> = A extends Dict ? B extends Dict ? "Do something" : never : never;
 
 // You can do
 type Version2<A, B> = IsSubtype<A, Dict> | IsSubtype<B, Dict> extends true ? "Do something" : never;
@@ -54,16 +70,28 @@ type Version2<A, B> = IsSubtype<A, Dict> | IsSubtype<B, Dict> extends true ? "Do
 
 ### IsNotSubtype
 
-```ts
-type IsNotSubtype<T, U> = ...
+```ts tab='Shape'
+type IsNotSubtype<T, U>
+```
+
+```ts tab='Source'
+type IsNotSubtype<T, U> = Not<IsSubtype<T, U>>;
 ```
 
 A negated version of [IsSubtype](#issubtype).
 
 ### HasType
 
-```ts
-type HasType<U, T> = ...
+```ts tab='Shape'
+type HasType<U, T>
+```
+
+```ts tab='Source'
+type HasType<U, T> = (U extends T ? true : false) extends infer R
+	? IsSubtype<R, true> | IsSubtype<[boolean], [R]> extends false
+		? false
+		: true
+	: never;
 ```
 
 Checks whether a union contains a specific type.
@@ -75,16 +103,25 @@ type R2 = HasType<"foo" | "bar", "baz">; // false
 
 ### LacksType
 
-```ts
-type LacksType<U, T> = ...
+```ts tab='Shape'
+type LacksType<U, T>
+```
+
+```ts tab='Source'
+type LacksType<U, T> = Not<HasType<U, T>>;
 ```
 
 A negated version of [HasType](#hastype).
 
 ### AreEqual
 
-```ts
-type AreEqual<A, B> = ...
+```ts tab='Shape'
+type AreEqual<A, B>
+```
+
+```ts tab='Source'
+type AreEqual<A, B> =
+	(<T>() => T extends A ? ":)" : ":(") extends <T>() => T extends B ? ":)" : ":(" ? true : false;
 ```
 
 Checks if two types are equal. Not just that they extend each other,
@@ -92,8 +129,12 @@ but are exactly the same (at least until a bug proves otherwise).
 
 ### AreNotEqual
 
-```ts
-type AreNotEqual<A, B> = ...
+```ts tab='Shape'
+type AreNotEqual<A, B>
+```
+
+```ts tab='Source'
+type AreNotEqual<A, B> = Not<AreEqual<A, B>>;
 ```
 
 A negated version of [AreEqual](#areequal).
@@ -102,16 +143,24 @@ A negated version of [AreEqual](#areequal).
 
 ### Valid
 
-```ts
-type Valid = ...
+```ts tab='Shape'
+type Valid
+```
+
+```ts tab='Source'
+type Valid = any;
 ```
 
 An alias for `any`.
 
 ### Range
 
-```ts
-type Range = ...
+```ts tab='Shape'
+type Range
+```
+
+```ts tab='Source'
+type Range = [start: number, end: number];
 ```
 
 A range type.
@@ -122,24 +171,36 @@ const ranges = elements.map<Range>((ele) => [ele.getStart(), ele.getEnd()]);
 
 ### NonNullish
 
-```ts
-type NonNullish<T> = ...
+```ts tab='Shape'
+type NonNullish<T>
+```
+
+```ts tab='Source'
+type NonNullish<T> = Exclude<T, undefined | null>;
 ```
 
 Removes `undefined` and `null` from a type.
 
 ### Nullish
 
-```ts
-type Nullish<T> = ...
+```ts tab='Shape'
+type Nullish<T>
+```
+
+```ts tab='Source'
+type Nullish<T> = T | undefined | null;
 ```
 
 Adds `undefined` and `null` to a type.
 
 ### Assert
 
-```ts
-type Assert<T, E> = ...
+```ts tab='Shape'
+type Assert<T extends E, E = true>
+```
+
+```ts tab='Source'
+type Assert<T extends E, E = true> = T;
 ```
 
 ```ts title='Example'
@@ -156,7 +217,7 @@ const tk = {
 
 // To make sure that all tokens have an alias, you can use something like this:
 {
-	type Check = Assert<AreEqual<Values<typeof tk>, Token>>;
+  type Check = Assert<AreEqual<Values<typeof tk>, Token>>;
 }
 // You'll see an error if there's a missing/extra token
 // Note: AreEqual and Values are other utils provided by this package
@@ -164,16 +225,28 @@ const tk = {
 
 ### Not
 
-```ts
-type Not<T> = ...
+```ts tab='Shape'
+type Not<T extends boolean>
+```
+
+```ts tab='Source'
+type Not<T extends boolean> = T extends true ? false : true;
 ```
 
 Negates a boolean.
 
 ### SmartExtract
 
-```ts
-type SmartExtract<T, U> = ...
+```ts tab='Shape'
+type SmartExtract<T, U>
+```
+
+```ts tab='Source'
+type SmartExtract<T, U> = T extends T
+	? IsUnknown<T> | IsAny<T> | IsPrimitive<T> extends false
+		? Extract<T, U>
+		: Extract<U, T>
+	: never;
 ```
 
 Similar to the built-in [Extract](#extract), except it return `Extract<U, T>` (or simply `U`)
@@ -181,8 +254,21 @@ when `T` is `unknown`, `any` or a **primitive type** (string, number, boolean).
 
 ### Self
 
-```ts
-type Self<T, I1, I2, I3, I4, I5> = ...
+```ts tab='Shape'
+type Self<T, I1 = TS_UT, I2 = TS_UT, I3 = TS_UT, I4 = TS_UT, I5 = TS_UT>
+```
+
+```ts tab='Source'
+type Self<T, I1 = TS_UT, I2 = TS_UT, I3 = TS_UT, I4 = TS_UT, I5 = TS_UT> = {
+	T: T;
+	1: I1;
+	2: I2;
+	3: I3;
+	4: I4;
+	5: I5;
+} extends infer R
+	? { [P in keyof R as R[P] extends TS_UT ? never : P]: R[P] }
+	: never;
 ```
 
 Useful for debugging.
