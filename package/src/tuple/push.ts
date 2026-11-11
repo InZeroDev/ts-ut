@@ -65,4 +65,3 @@ export type Shift<T extends ROList, N extends number = 1> =
 		: [];
 
 // ---Internal---
-

@@ -73,7 +73,7 @@ export type IsTuple<T> = T extends T
 		: false
 	: never;
 
-	export type IsPrimitive<T> = IsAny<T> | IsUnknown<T> | IsNever<T> extends false
+export type IsPrimitive<T> = IsAny<T> | IsUnknown<T> | IsNever<T> extends false
 	? _IsPrimitive<_Wrap<T>>
 	: false;
 

@@ -1,6 +1,5 @@
 {
 	"name": "@inzero/ts-ut",
-	"homepage": "https://ts-ut.vercel.app",
 	"version": "0.3.0",
 	"description": "TypeScript Utility Types",
 	"keywords": [
@@ -8,6 +7,12 @@
 		"utility",
 		"types"
 	],
+	"homepage": "https://ts-ut.vercel.app",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/InZeroDev/ts-ut",
+		"directory": "package"
+	},
 	"license": "MIT",
 	"author": "InZero",
 	"exports": {
@@ -35,11 +40,6 @@
 		"format": "prettier --write .",
 		"gen-barrel": "barrel src/index.ts src/*/index.ts",
 		"prepublish": "pnpm gen-barrel; pnpm build"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/InZeroDev/ts-ut",
-		"directory": "package"
 	},
 	"devDependencies": {
 		"@inzero/barrel": "0.0.2",
