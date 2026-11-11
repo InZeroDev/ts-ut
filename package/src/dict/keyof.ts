@@ -88,13 +88,13 @@ export type KeysOfType<T, U> = T extends T
  * type R1 = KeysOfType<Obj, number>; // "a"
  * type R2 = KeysWithType<Obj, number>; // "a" | "b"
  */
-export type KeysContainingType<T, U> = T extends T
+export type KeysWithType<T, U> = T extends T
 	? keyof {
 			[P in keyof T as HasType<T[P], U> extends true ? P : never]: T[P];
 		}
 	: never;
 
-export type KeysOfExactType<T, U> = T extends T
+export type KeysWithExactType<T, U> = T extends T
 	? keyof {
 			[P in keyof T as AreEqual<T[P], U> extends true ? P : never]: T[P];
 		}
@@ -124,19 +124,19 @@ export type KeysOfTypeDeep<T, U, _K extends string = ""> = T extends T
 		}>
 	: never;
 
-export type KeysContainingTypeDeep<T, U, _K extends string = ""> = T extends T
+export type KeysWithTypeDeep<T, U, _K extends string = ""> = T extends T
 	? Values<{
 			[P in keyof T as HasType<T[P], U | Dict> extends true ? P : never]-?: T[P] extends infer TK
 				? Next<P & string, _K> extends infer N extends string
 					? HasType<TK, Dict> extends true
-						? KeysContainingTypeDeep<Extract<TK, Dict>, U, N>
+						? KeysWithTypeDeep<Extract<TK, Dict>, U, N>
 						: N
 					: never
 				: never;
 		}>
 	: never;
 
-export type KeysOfExactTypeDeep<T, U, _K extends string = ""> = T extends T
+export type KeysWithExactTypeDeep<T, U, _K extends string = ""> = T extends T
 	? Values<{
 			[
 				P in keyof T as AreEqual<T[P], U> extends true
@@ -147,7 +147,7 @@ export type KeysOfExactTypeDeep<T, U, _K extends string = ""> = T extends T
 			]-?: T[P] extends infer TK
 				? Next<P & string, _K> extends infer N extends string
 					? HasType<TK, Dict> extends true
-						? KeysOfExactTypeDeep<Extract<TK, Dict>, U, N>
+						? KeysWithExactTypeDeep<Extract<TK, Dict>, U, N>
 						: N
 					: never
 				: never;
