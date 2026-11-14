@@ -1,4 +1,4 @@
-import type { Mutable, SetDeep } from "./dict";
+import type { DictKey, Mutable, SetDeep } from "./dict";
 import type { List, ROList } from "./list";
 import type { Decrement, Increment, ToNumber } from "./number";
 import type { AreEqual, IsAny, IsNever, IsSubtype, IsUnknown } from "./other";
@@ -91,3 +91,13 @@ type _Wrap<T> = (T extends T ? [T] : never) extends infer R
 
 declare const __TS_UT: unique symbol;
 export type TS_UT = typeof __TS_UT;
+
+export type IsOptionalKey<T, K extends DictKey> = T extends T
+	? K extends K
+		? K extends keyof T
+			? {} extends Pick<T, K>
+				? true
+				: false
+			: never
+		: never
+	: never;
