@@ -93,12 +93,10 @@ declare const __TS_UT: unique symbol;
 export type TS_UT = typeof __TS_UT;
 
 export type IsOptionalKey<T, K extends DictKey> = T extends T
-	? K extends K
-		? K extends keyof T
-			? {} extends Pick<T, K>
-				? true
-				: false
-			: never
+	? K extends keyof T
+		? {} extends Pick<T, K>
+			? true
+			: false
 		: never
 	: never;
 
