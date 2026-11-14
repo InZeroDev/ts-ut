@@ -1,6 +1,8 @@
+import type { IsOptionalKey } from "../_internal";
+import type { HasType, IsSubtype } from "../other";
 import type { Suggest } from "../string";
 import type { Keys } from "./keyof";
-import type { Dict, Known, SuggestKey } from "./utils";
+import type { Dict, DictKey, Known, SuggestKey } from "./utils";
 
 /**
  * A distributive/loose version of the built-in {@linkcode Pick}.
@@ -52,3 +54,28 @@ export type LooseOmit<T, K extends SuggestKey<Keys<Known<T>>>> = T extends T
  *
  */
 export type StrictOmit<T, K extends Keys<T>> = LooseOmit<T, K>;
+
+/**
+ * Pick optional properties of `T`.
+ *
+ * @example
+ * type R1 = PickOptional<{ a: 1, b: 2, c?: 4 }>; // { c?: 4 }
+ */
+export type PickOptional<T> = {
+	[P in keyof T as IsOptionalKey<T, P> extends true ? P : never]: T[P];
+};
+
+/**
+ * Recursively pick optional properties of `T`.
+ *
+ * @example
+ * type Input = { a?: 1, b: { c?: 4, d: 5 } }
+ *
+ * type R1 = PickOptional<Input>; // { a?: 1 }
+ * type R2 = PickOptionalDeep<Input>; // { a?: 2, b: { c?: 4 } }
+ */
+export type PickOptionalDeep<T> = {
+	[
+		P in keyof T as IsOptionalKey<T, P> | HasType<T[P], Dict> extends false ? never : P
+	]: T[P] extends infer TP ? (TP extends Dict ? PickOptionalDeep<TP> : TP) : never;
+} & {};
