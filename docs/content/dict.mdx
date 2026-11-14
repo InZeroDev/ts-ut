@@ -7,11 +7,11 @@ title: dict
 ### ExtractByValue
 
 ```ts tab='Shape'
-type ExtractByValue<T, M extends Dict<SuggestKey<Keys<Known<T>>>>>
+type ExtractByValue<T, M extends Partial<Dict<Keys<T>>>>
 ```
 
 ```ts tab='Source'
-type ExtractByValue<T, M extends Dict<SuggestKey<Keys<Known<T>>>>> = T extends T
+type ExtractByValue<T, M extends Partial<Dict<Keys<T>>>> = T extends T
 	? Values<{
 			[P in keyof M]: P extends keyof T ? HasType<T[P], M[P]> : false;
 		}> extends true
@@ -32,11 +32,11 @@ type R2 = ExtractByValue<Obj, { a: string | number }>; // { a: string } | { a: n
 ### ExtractByExactValue
 
 ```ts tab='Shape'
-type ExtractByExactValue<T, M extends Dict<SuggestKey<Keys<Known<T>>>>>
+type ExtractByExactValue<T, M extends Partial<Dict<Keys<T>>>>
 ```
 
 ```ts tab='Source'
-type ExtractByExactValue<T, M extends Dict<SuggestKey<Keys<Known<T>>>>> = T extends T
+type ExtractByExactValue<T, M extends Partial<Dict<Keys<T>>>> = T extends T
 	? Values<{
 			[P in keyof M]: P extends keyof T ? AreEqual<T[P], M[P]> : false;
 		}> extends true
@@ -843,7 +843,7 @@ type RequiredDeep<T>
 ```ts tab='Source'
 type RequiredDeep<T> = {
 	[P in keyof T]-?: RequiredDeep<T[P]>;
-};
+} & {};
 ```
 
 Makes all properties of `T` required (deep).
@@ -857,7 +857,7 @@ type PartialDeep<T>
 ```ts tab='Source'
 type PartialDeep<T> = {
 	[P in keyof T]?: PartialDeep<T[P]>;
-};
+} & {};
 ```
 
 Makes all properties of `T` optional (deep).
@@ -871,7 +871,7 @@ type ReadonlyDeep<T>
 ```ts tab='Source'
 type ReadonlyDeep<T> = {
 	readonly [P in keyof T]: ReadonlyDeep<T[P]>;
-};
+} & {};
 ```
 
 Makes all properties of `T` readonly (deep).
@@ -885,7 +885,7 @@ type MutableDeep<T>
 ```ts tab='Source'
 type MutableDeep<T> = {
 	-readonly [P in keyof T]: MutableDeep<T[P]>;
-};
+} & {};
 ```
 
 Makes all properties of `T` mutable (deep).
@@ -1036,6 +1036,170 @@ type R2 = StrictOmit<{a: 1}, "z">; // {a: 1} // + Error saying 'z' is not an exi
 
 type R3 = Omit<{a: 1} | {b: 2}, "a">; // {} // + Error
 type R4 = StrictOmit<{a: 1} | {b: 2}, "a">; // {} | {b: 2}
+```
+
+### PickOptional
+
+```ts tab='Shape'
+type PickOptional<T>
+```
+
+```ts tab='Source'
+type PickOptional<T> = {
+	[P in keyof T as IsOptionalKey<T, P> extends true ? P : never]: T[P];
+};
+```
+
+Pick optional properties of `T`.
+
+```ts title='Example'
+type R1 = PickOptional<{ a: 1, b: 2, c?: 4 }>; // { c?: 4 }
+```
+
+### PickOptionalDeep
+
+```ts tab='Shape'
+type PickOptionalDeep<T>
+```
+
+```ts tab='Source'
+type PickOptionalDeep<T> = {
+	[
+		P in keyof T as IsOptionalKey<T, P> | HasType<T[P], Dict> extends false ? never : P
+	]: T[P] extends infer TP ? (TP extends Dict ? PickOptionalDeep<TP> : TP) : never;
+} & {};
+```
+
+Recursively pick optional properties of `T`.
+
+```ts title='Example'
+type Input = { a?: 1, b: { c?: 4, d: 5 } }
+
+type R1 = PickOptional<Input>; // { a?: 1 }
+type R2 = PickOptionalDeep<Input>; // { a?: 2, b: { c?: 4 } }
+```
+
+### PickRequired
+
+```ts tab='Shape'
+type PickRequired<T>
+```
+
+```ts tab='Source'
+type PickRequired<T> = {
+	[P in keyof T as IsOptionalKey<T, P> extends true ? never : P]: T[P];
+};
+```
+
+Pick required properties of `T`.
+
+```ts title='Example'
+type R1 = PickRequired<{ a: 1, b: 2, c?: 4 }>; // { a: 1, b: 2 }
+```
+
+### PickRequiredDeep
+
+```ts tab='Shape'
+type PickRequiredDeep<T>
+```
+
+```ts tab='Source'
+type PickRequiredDeep<T> = {
+	[
+		P in keyof T as Not<IsOptionalKey<T, P>> | HasType<T[P], Dict> extends false ? never : P
+	]: T[P] extends infer TP ? (TP extends Dict ? PickRequiredDeep<TP> : TP) : never;
+} & {};
+```
+
+Recursively pick required properties of `T`.
+
+```ts title='Example'
+type Input = { a?: 1, b: { c?: 4, d: 5 } }
+
+type R1 = PickRequired<Input>; // { b: { c?: 4, d: 5 } }
+type R2 = PickRequiredDeep<Input>; // { b: { d: 5 } }
+```
+
+### PickReadonly
+
+```ts tab='Shape'
+type PickReadonly<T>
+```
+
+```ts tab='Source'
+type PickReadonly<T> = {
+	[P in keyof T as IsReadonlyKey<T, P> extends true ? P : never]: T[P];
+};
+```
+
+Pick readonly properties of `T`.
+
+```ts title='Example'
+type R1 = PickReadonly<{ a: 1, readonly c: 4 }>; // { readonly c: 4 }
+```
+
+### PickReadonlyDeep
+
+```ts tab='Shape'
+type PickReadonlyDeep<T>
+```
+
+```ts tab='Source'
+type PickReadonlyDeep<T> = {
+	[
+		P in keyof T as IsReadonlyKey<T, P> | HasType<T[P], Dict> extends false ? never : P
+	]: T[P] extends infer TP ? (TP extends Dict ? PickReadonlyDeep<TP> : TP) : never;
+} & {};
+```
+
+Recursively pick readonly properties of `T`.
+
+```ts title='Example'
+type Input = { readonly a: 1; b: { readonly c: 4, d: 5 }, e: 6 };
+
+type R1 = PickReadonly<Input>; // { readonly a: 1 }
+type R2 = PickReadonlyDeep<Input>; // { readonly a: 1, b: { readonly c: 4 } }
+```
+
+### PickMutable
+
+```ts tab='Shape'
+type PickMutable<T>
+```
+
+```ts tab='Source'
+type PickMutable<T> = {
+	[P in keyof T as IsReadonlyKey<T, P> extends true ? never : P]: T[P];
+};
+```
+
+Pick mutable properties of `T`.
+
+```ts title='Example'
+type R1 = PickMutable<{ a: 1, readonly c: 4 }>; // { a: 1 }
+```
+
+### PickMutableDeep
+
+```ts tab='Shape'
+type PickMutableDeep<T>
+```
+
+```ts tab='Source'
+type PickMutableDeep<T> = {
+	[
+		P in keyof T as Not<IsReadonlyKey<T, P>> | HasType<T[P], Dict> extends false ? never : P
+	]: T[P] extends infer TP ? (TP extends Dict ? PickMutableDeep<TP> : TP) : never;
+} & {};
+```
+
+Recursively pick mutable properties of `T`.
+
+```ts title='Example'
+type Input = { readonly a: 1; b: { readonly c: 4, d: 5 }, e: 6 };
+
+type R1 = PickMutable<Input>; // { b: { readonly c: 4, d: 5 }, e: 6 }
+type R2 = PickMutableDeep<Input>; // { b: { d: 5 }, e: 6 }
 ```
 
 ## prefix
