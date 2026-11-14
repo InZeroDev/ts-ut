@@ -14,28 +14,28 @@ export type Mutable<T> = {
  */
 export type RequiredDeep<T> = {
 	[P in keyof T]-?: RequiredDeep<T[P]>;
-};
+} & {};
 
 /**
  * Makes all properties of `T` optional (deep).
  */
 export type PartialDeep<T> = {
 	[P in keyof T]?: PartialDeep<T[P]>;
-};
+} & {};
 
 /**
  * Makes all properties of `T` readonly (deep).
  */
 export type ReadonlyDeep<T> = {
 	readonly [P in keyof T]: ReadonlyDeep<T[P]>;
-};
+} & {};
 
 /**
  * Makes all properties of `T` mutable (deep).
  */
 export type MutableDeep<T> = {
 	-readonly [P in keyof T]: MutableDeep<T[P]>;
-};
+} & {};
 
 /**
  * Makes a property of `T` required.
