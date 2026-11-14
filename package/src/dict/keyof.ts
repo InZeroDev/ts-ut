@@ -34,7 +34,7 @@ export type Values<T> = T extends T ? T[keyof T] : never;
  *
  * type R1 = Entries<Config>; // ["foo" | "bar", string | number] | ["c", 4]
  */
-export type Entries<T> = T extends T ? [Keys<T>, Values<T>] : never;
+export type Entries<T> = T extends T ? [keyof T, T[keyof T]] : never;
 
 /**
  * A deep version of {@linkcode Keys}.
