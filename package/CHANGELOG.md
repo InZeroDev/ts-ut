@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.4.0] 2026-11-14
+
+### Changed
+
+- `MutableDeep`, `ReadonlyDeep`, `PartialDeep` and `RequiredDeep` now return prettified objects.
+
+### Added
+
+- Added `PickMutable`, `PickReadonly`, `PickOptional`, `PickRequired` and their deep versions.
+- Added internal utils `IsOptionalKey` and `IsReadonlyKey`.
+
 ## [0.3.0] 2026-11-10
 
 This update focuses on:
