@@ -1,7 +1,7 @@
-import type { DictKey, Mutable, SetDeep } from "./dict";
+import type { DictKey, Keys, Mutable, SetDeep } from "./dict";
 import type { List, ROList } from "./list";
 import type { Decrement, Increment, ToNumber } from "./number";
-import type { AreEqual, IsAny, IsNever, IsSubtype, IsUnknown } from "./other";
+import type { AreEqual, AreNotEqual, IsAny, IsNever, IsSubtype, IsUnknown } from "./other";
 import type { EnsurePrefix, Stringify } from "./string";
 
 export type IsNegative<T extends string | number> = T extends T
@@ -101,3 +101,14 @@ export type IsOptionalKey<T, K extends DictKey> = T extends T
 			: never
 		: never
 	: never;
+
+export type IsReadonlyKey<T, K extends Keys<T>> = T extends T
+	? K extends keyof T
+		? _IsReadonlyKey<T, K>
+		: never
+	: never;
+
+type _IsReadonlyKey<T, K extends keyof T> = AreNotEqual<
+	{ [P in K]: T[P] },
+	{ -readonly [P in K]: T[P] }
+>;
