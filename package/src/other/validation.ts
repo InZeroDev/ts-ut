@@ -47,8 +47,9 @@ export type IsNotSubtype<T, U> = Not<IsSubtype<T, U>>;
  * type R1 = HasType<"foo" | "bar", "foo">; // true
  * type R2 = HasType<"foo" | "bar", "baz">; // false
  */
+// Warning: Do not remove the useless infer, it's not useless. See: .dev/docs/useless-infer.md
 export type HasType<U, T> = (U extends T ? true : false) extends infer R
-	? IsSubtype<R, true> | IsSubtype<[boolean], [R]> extends false
+	? R extends false
 		? false
 		: true
 	: never;
