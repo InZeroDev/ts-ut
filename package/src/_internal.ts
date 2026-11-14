@@ -100,7 +100,7 @@ export type IsOptionalKey<T, K extends DictKey> = T extends T
 		: never
 	: never;
 
-export type IsReadonlyKey<T, K extends Keys<T>> = T extends T
+export type IsReadonlyKey<T, K extends DictKey> = T extends T
 	? K extends keyof T
 		? _IsReadonlyKey<T, K>
 		: never
