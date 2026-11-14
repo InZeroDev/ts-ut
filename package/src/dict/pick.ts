@@ -1,5 +1,5 @@
-import type { IsOptionalKey } from "../_internal";
-import type { HasType, IsSubtype, Not } from "../other";
+import type { IsOptionalKey, IsReadonlyKey } from "../_internal";
+import type { AreEqual, AreNotEqual, HasType, IsSubtype, Not } from "../other";
 import type { Suggest } from "../string";
 import type { Keys } from "./keyof";
 import type { Dict, DictKey, Known, SuggestKey } from "./utils";
@@ -103,4 +103,54 @@ export type PickRequiredDeep<T> = {
 	[
 		P in keyof T as Not<IsOptionalKey<T, P>> | HasType<T[P], Dict> extends false ? never : P
 	]: T[P] extends infer TP ? (TP extends Dict ? PickRequiredDeep<TP> : TP) : never;
+} & {};
+
+/**
+ * Pick readonly properties of `T`.
+ *
+ * @example
+ * type R1 = PickReadonly<{ a: 1, readonly c: 4 }>; // { readonly c: 4 }
+ */
+export type PickReadonly<T> = {
+	[P in keyof T as IsReadonlyKey<T, P> extends true ? P : never]: T[P];
+};
+
+/**
+ * Recursively pick readonly properties of `T`.
+ *
+ * @example
+ * type Input = { readonly a: 1; b: { readonly c: 4, d: 5 }, e: 6 };
+ *
+ * type R1 = PickReadonly<Input>; // { readonly a: 1 }
+ * type R2 = PickReadonlyDeep<Input>; // { readonly a: 1, b: { readonly c: 4 } }
+ */
+export type PickReadonlyDeep<T> = {
+	[
+		P in keyof T as IsReadonlyKey<T, P> | HasType<T[P], Dict> extends false ? never : P
+	]: T[P] extends infer TP ? (TP extends Dict ? PickReadonlyDeep<TP> : TP) : never;
+} & {};
+
+/**
+ * Pick mutable properties of `T`.
+ *
+ * @example
+ * type R1 = PickMutable<{ a: 1, readonly c: 4 }>; // { a: 1 }
+ */
+export type PickMutable<T> = {
+	[P in keyof T as IsReadonlyKey<T, P> extends true ? never : P]: T[P];
+};
+
+/**
+ * Recursively pick mutable properties of `T`.
+ *
+ * @example
+ * type Input = { readonly a: 1; b: { readonly c: 4, d: 5 }, e: 6 };
+ *
+ * type R1 = PickMutable<Input>; // { b: { readonly c: 4, d: 5 }, e: 6 }
+ * type R2 = PickMutableDeep<Input>; // { b: { d: 5 }, e: 6 }
+ */
+export type PickMutableDeep<T> = {
+	[
+		P in keyof T as Not<IsReadonlyKey<T, P>> | HasType<T[P], Dict> extends false ? never : P
+	]: T[P] extends infer TP ? (TP extends Dict ? PickMutableDeep<TP> : TP) : never;
 } & {};
