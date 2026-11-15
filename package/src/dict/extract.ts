@@ -1,6 +1,6 @@
-import type { AreEqual, HasType } from "../other";
+import type { AreEqual, HasType, IsNever } from "../other";
 import type { DictKey, SuggestKey } from "./utils";
-import type { Keys, Values } from "./keyof";
+import type { Keys, KeysOfType, Values } from "./keyof";
 import type { Dict, Known } from "./utils";
 
 /**
@@ -36,3 +36,45 @@ export type ExtractByExactValue<T, M extends Partial<Dict<Keys<T>>>> = T extends
 		? T
 		: never
 	: never;
+
+/**
+ * Extracts types assignable to `U` from values of `T`.
+ *
+ * By default, extraction is applied to all properties. If K is specified,
+ * extraction is limited to those keys, leaving the remaining properties unchanged.
+ *
+ * @example
+ * type T = { a: string | number, b: string | number };
+ *
+ * type R1 = ExtractFromValues<T, string>; // { a: string, b: string };
+ */
+export type ExtractFromValues<T, U, K extends SuggestKey<Keys<Known<T>>> = never> = {
+	[P in keyof T]: Extract<T[P], U> extends infer R
+		? IsNever<K> extends true
+			? R
+			: P extends K
+				? R
+				: T[P]
+		: never;
+};
+
+/**
+ * Excludes types assignable to `U` from values of `T`.
+ *
+ * By default, exclusion is applied to all properties. If K is specified,
+ * exclusion is limited to those keys, leaving the remaining properties unchanged.
+ *
+ * @example
+ * type T = { a: string | undefined, b: string | undefined };
+ *
+ * type R1 = ExcludeFromValues<T, string>; // { a: string, b: string };
+ */
+export type ExcludeFromValues<T, U, K extends SuggestKey<Keys<Known<T>>> = never> = {
+	[P in keyof T]: Exclude<T[P], U> extends infer R
+		? IsNever<K> extends true
+			? R
+			: P extends K
+				? R
+				: T[P]
+		: never;
+};
