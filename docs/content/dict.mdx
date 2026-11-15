@@ -54,6 +54,64 @@ type R1 = Extract<Obj, { a: string | boolean }>; // { a: string } | { a: string 
 type R2 = ExtractByExactValue<Obj, { a: string | boolean }>; // { a: string | boolean }
 ```
 
+### ExtractFromValues
+
+```ts tab='Shape'
+type ExtractFromValues<T, U, K extends SuggestKey<Keys<Known<T>>> = never>
+```
+
+```ts tab='Source'
+type ExtractFromValues<T, U, K extends SuggestKey<Keys<Known<T>>> = never> = {
+	[P in keyof T]: Extract<T[P], U> extends infer R
+		? IsNever<K> extends true
+			? R
+			: P extends K
+				? R
+				: T[P]
+		: never;
+};
+```
+
+Extracts types assignable to `U` from values of `T`.
+
+By default, extraction is applied to all properties. If K is specified,
+extraction is limited to those keys, leaving the remaining properties unchanged.
+
+```ts title='Example'
+type T = { a: string | number, b: string | number };
+
+type R1 = ExtractFromValues<T, string>; // { a: string, b: string };
+```
+
+### ExcludeFromValues
+
+```ts tab='Shape'
+type ExcludeFromValues<T, U, K extends SuggestKey<Keys<Known<T>>> = never>
+```
+
+```ts tab='Source'
+type ExcludeFromValues<T, U, K extends SuggestKey<Keys<Known<T>>> = never> = {
+	[P in keyof T]: Exclude<T[P], U> extends infer R
+		? IsNever<K> extends true
+			? R
+			: P extends K
+				? R
+				: T[P]
+		: never;
+};
+```
+
+Excludes types assignable to `U` from values of `T`.
+
+By default, exclusion is applied to all properties. If K is specified,
+exclusion is limited to those keys, leaving the remaining properties unchanged.
+
+```ts title='Example'
+type T = { a: string | undefined, b: string | undefined };
+
+type R1 = ExcludeFromValues<T, string>; // { a: string, b: string };
+```
+
 ## get
 
 ### Get
@@ -219,7 +277,7 @@ type Entries<T>
 ```
 
 ```ts tab='Source'
-type Entries<T> = T extends T ? [Keys<T>, Values<T>] : never;
+type Entries<T> = T extends T ? [keyof T, T[keyof T]] : never;
 ```
 
 Returns all possible entries.
@@ -1045,9 +1103,11 @@ type PickOptional<T>
 ```
 
 ```ts tab='Source'
-type PickOptional<T> = {
-	[P in keyof T as IsOptionalKey<T, P> extends true ? P : never]: T[P];
-};
+type PickOptional<T> = T extends T
+	? {
+			[P in keyof T as IsOptionalKey<T, P> extends true ? P : never]: T[P];
+		} & {}
+	: never;
 ```
 
 Pick optional properties of `T`.
@@ -1063,11 +1123,13 @@ type PickOptionalDeep<T>
 ```
 
 ```ts tab='Source'
-type PickOptionalDeep<T> = {
-	[
-		P in keyof T as IsOptionalKey<T, P> | HasType<T[P], Dict> extends false ? never : P
-	]: T[P] extends infer TP ? (TP extends Dict ? PickOptionalDeep<TP> : TP) : never;
-} & {};
+type PickOptionalDeep<T> = T extends T
+	? {
+			[
+				P in keyof T as IsOptionalKey<T, P> | HasType<T[P], Dict> extends false ? never : P
+			]: T[P] extends infer TP ? (TP extends Dict ? PickOptionalDeep<TP> : TP) : never;
+		} & {}
+	: never;
 ```
 
 Recursively pick optional properties of `T`.
@@ -1086,9 +1148,11 @@ type PickRequired<T>
 ```
 
 ```ts tab='Source'
-type PickRequired<T> = {
-	[P in keyof T as IsOptionalKey<T, P> extends true ? never : P]: T[P];
-};
+type PickRequired<T> = T extends T
+	? {
+			[P in keyof T as IsOptionalKey<T, P> extends true ? never : P]: T[P];
+		} & {}
+	: never;
 ```
 
 Pick required properties of `T`.
@@ -1104,11 +1168,13 @@ type PickRequiredDeep<T>
 ```
 
 ```ts tab='Source'
-type PickRequiredDeep<T> = {
-	[
-		P in keyof T as Not<IsOptionalKey<T, P>> | HasType<T[P], Dict> extends false ? never : P
-	]: T[P] extends infer TP ? (TP extends Dict ? PickRequiredDeep<TP> : TP) : never;
-} & {};
+type PickRequiredDeep<T> = T extends T
+	? {
+			[
+				P in keyof T as Not<IsOptionalKey<T, P>> | HasType<T[P], Dict> extends false ? never : P
+			]: T[P] extends infer TP ? (TP extends Dict ? PickRequiredDeep<TP> : TP) : never;
+		} & {}
+	: never;
 ```
 
 Recursively pick required properties of `T`.
@@ -1127,9 +1193,11 @@ type PickReadonly<T>
 ```
 
 ```ts tab='Source'
-type PickReadonly<T> = {
-	[P in keyof T as IsReadonlyKey<T, P> extends true ? P : never]: T[P];
-};
+type PickReadonly<T> = T extends T
+	? {
+			[P in keyof T as IsReadonlyKey<T, P> extends true ? P : never]: T[P];
+		} & {}
+	: never;
 ```
 
 Pick readonly properties of `T`.
@@ -1145,11 +1213,13 @@ type PickReadonlyDeep<T>
 ```
 
 ```ts tab='Source'
-type PickReadonlyDeep<T> = {
-	[
-		P in keyof T as IsReadonlyKey<T, P> | HasType<T[P], Dict> extends false ? never : P
-	]: T[P] extends infer TP ? (TP extends Dict ? PickReadonlyDeep<TP> : TP) : never;
-} & {};
+type PickReadonlyDeep<T> = T extends T
+	? {
+			[
+				P in keyof T as IsReadonlyKey<T, P> | HasType<T[P], Dict> extends false ? never : P
+			]: T[P] extends infer TP ? (TP extends Dict ? PickReadonlyDeep<TP> : TP) : never;
+		} & {}
+	: never;
 ```
 
 Recursively pick readonly properties of `T`.
@@ -1168,9 +1238,11 @@ type PickMutable<T>
 ```
 
 ```ts tab='Source'
-type PickMutable<T> = {
-	[P in keyof T as IsReadonlyKey<T, P> extends true ? never : P]: T[P];
-};
+type PickMutable<T> = T extends T
+	? {
+			[P in keyof T as IsReadonlyKey<T, P> extends true ? never : P]: T[P];
+		} & {}
+	: never;
 ```
 
 Pick mutable properties of `T`.
@@ -1186,11 +1258,13 @@ type PickMutableDeep<T>
 ```
 
 ```ts tab='Source'
-type PickMutableDeep<T> = {
-	[
-		P in keyof T as Not<IsReadonlyKey<T, P>> | HasType<T[P], Dict> extends false ? never : P
-	]: T[P] extends infer TP ? (TP extends Dict ? PickMutableDeep<TP> : TP) : never;
-} & {};
+type PickMutableDeep<T> = T extends T
+	? {
+			[
+				P in keyof T as Not<IsReadonlyKey<T, P>> | HasType<T[P], Dict> extends false ? never : P
+			]: T[P] extends infer TP ? (TP extends Dict ? PickMutableDeep<TP> : TP) : never;
+		} & {}
+	: never;
 ```
 
 Recursively pick mutable properties of `T`.
@@ -1420,3 +1494,19 @@ type PrettifyDeep<T> = {
 ```
 
 A deep version of [Prettify](#prettify).
+
+### PrettifyKeyof
+
+```ts tab='Shape'
+type PrettifyKeyof<T>
+```
+
+```ts tab='Source'
+type PrettifyKeyof<T> = (T extends T ? [T] : never)[number];
+```
+
+```ts title='Example'
+type MyDict = { a: 1, b: 2 };
+type MyDictKeys = keyof MyDict; // type: keyof MyDict
+type Pretty = PrettifyKeyof<keyof MyDict>; // type: "a" | "b"
+```

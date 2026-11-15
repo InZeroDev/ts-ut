@@ -88,7 +88,7 @@ type HasType<U, T>
 
 ```ts tab='Source'
 type HasType<U, T> = (U extends T ? true : false) extends infer R
-	? IsSubtype<R, true> | IsSubtype<[boolean], [R]> extends false
+	? [R] extends [false]
 		? false
 		: true
 	: never;
