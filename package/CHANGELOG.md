@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.0] 2026-11-15
+
+### Added
+
+- Added dict utils: `ExtractFromValues`, `ExcludeFromValues` and `PrettifyKeyof`.
+
+### Changed
+
+- Improve some utility implementations without changing their behavior.
+
+### Fixed
+
+- Add distribution in dict pick utils: `PickMutable`, `PickMutableDeep`, ...
+
 ## [0.4.0] 2026-11-14
 
 ### Changed
