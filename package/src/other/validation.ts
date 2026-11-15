@@ -49,7 +49,7 @@ export type IsNotSubtype<T, U> = Not<IsSubtype<T, U>>;
  */
 // Warning: Do not remove the useless infer, it's not useless. See: .dev/docs/useless-infer.md
 export type HasType<U, T> = (U extends T ? true : false) extends infer R
-	? R extends false
+	? [R] extends [false]
 		? false
 		: true
 	: never;
