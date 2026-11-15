@@ -44,3 +44,11 @@ export type Prettify<T> = { [P in keyof T]: T[P] } & {};
 export type PrettifyDeep<T> = {
 	[P in keyof T]: T[P] extends infer V ? (V extends Dict ? PrettifyDeep<V> : V) : never;
 } & {};
+
+/**
+ * @example
+ * type MyDict = { a: 1, b: 2 };
+ * type MyDictKeys = keyof MyDict; // type: keyof MyDict
+ * type Pretty = PrettifyKeyof<keyof MyDict>; // type: "a" | "b"
+ */
+export type PrettifyKeyof<T> = (T extends T ? [T] : never)[number];
