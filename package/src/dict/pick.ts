@@ -61,9 +61,11 @@ export type StrictOmit<T, K extends Keys<T>> = LooseOmit<T, K>;
  * @example
  * type R1 = PickOptional<{ a: 1, b: 2, c?: 4 }>; // { c?: 4 }
  */
-export type PickOptional<T> = {
-	[P in keyof T as IsOptionalKey<T, P> extends true ? P : never]: T[P];
-};
+export type PickOptional<T> = T extends T
+	? {
+			[P in keyof T as IsOptionalKey<T, P> extends true ? P : never]: T[P];
+		} & {}
+	: never;
 
 /**
  * Recursively pick optional properties of `T`.
@@ -74,11 +76,13 @@ export type PickOptional<T> = {
  * type R1 = PickOptional<Input>; // { a?: 1 }
  * type R2 = PickOptionalDeep<Input>; // { a?: 2, b: { c?: 4 } }
  */
-export type PickOptionalDeep<T> = {
-	[
-		P in keyof T as IsOptionalKey<T, P> | HasType<T[P], Dict> extends false ? never : P
-	]: T[P] extends infer TP ? (TP extends Dict ? PickOptionalDeep<TP> : TP) : never;
-} & {};
+export type PickOptionalDeep<T> = T extends T
+	? {
+			[
+				P in keyof T as IsOptionalKey<T, P> | HasType<T[P], Dict> extends false ? never : P
+			]: T[P] extends infer TP ? (TP extends Dict ? PickOptionalDeep<TP> : TP) : never;
+		} & {}
+	: never;
 
 /**
  * Pick required properties of `T`.
@@ -86,9 +90,11 @@ export type PickOptionalDeep<T> = {
  * @example
  * type R1 = PickRequired<{ a: 1, b: 2, c?: 4 }>; // { a: 1, b: 2 }
  */
-export type PickRequired<T> = {
-	[P in keyof T as IsOptionalKey<T, P> extends true ? never : P]: T[P];
-};
+export type PickRequired<T> = T extends T
+	? {
+			[P in keyof T as IsOptionalKey<T, P> extends true ? never : P]: T[P];
+		} & {}
+	: never;
 
 /**
  * Recursively pick required properties of `T`.
@@ -99,11 +105,13 @@ export type PickRequired<T> = {
  * type R1 = PickRequired<Input>; // { b: { c?: 4, d: 5 } }
  * type R2 = PickRequiredDeep<Input>; // { b: { d: 5 } }
  */
-export type PickRequiredDeep<T> = {
-	[
-		P in keyof T as Not<IsOptionalKey<T, P>> | HasType<T[P], Dict> extends false ? never : P
-	]: T[P] extends infer TP ? (TP extends Dict ? PickRequiredDeep<TP> : TP) : never;
-} & {};
+export type PickRequiredDeep<T> = T extends T
+	? {
+			[
+				P in keyof T as Not<IsOptionalKey<T, P>> | HasType<T[P], Dict> extends false ? never : P
+			]: T[P] extends infer TP ? (TP extends Dict ? PickRequiredDeep<TP> : TP) : never;
+		} & {}
+	: never;
 
 /**
  * Pick readonly properties of `T`.
@@ -111,9 +119,11 @@ export type PickRequiredDeep<T> = {
  * @example
  * type R1 = PickReadonly<{ a: 1, readonly c: 4 }>; // { readonly c: 4 }
  */
-export type PickReadonly<T> = {
-	[P in keyof T as IsReadonlyKey<T, P> extends true ? P : never]: T[P];
-};
+export type PickReadonly<T> = T extends T
+	? {
+			[P in keyof T as IsReadonlyKey<T, P> extends true ? P : never]: T[P];
+		} & {}
+	: never;
 
 /**
  * Recursively pick readonly properties of `T`.
@@ -124,11 +134,13 @@ export type PickReadonly<T> = {
  * type R1 = PickReadonly<Input>; // { readonly a: 1 }
  * type R2 = PickReadonlyDeep<Input>; // { readonly a: 1, b: { readonly c: 4 } }
  */
-export type PickReadonlyDeep<T> = {
-	[
-		P in keyof T as IsReadonlyKey<T, P> | HasType<T[P], Dict> extends false ? never : P
-	]: T[P] extends infer TP ? (TP extends Dict ? PickReadonlyDeep<TP> : TP) : never;
-} & {};
+export type PickReadonlyDeep<T> = T extends T
+	? {
+			[
+				P in keyof T as IsReadonlyKey<T, P> | HasType<T[P], Dict> extends false ? never : P
+			]: T[P] extends infer TP ? (TP extends Dict ? PickReadonlyDeep<TP> : TP) : never;
+		} & {}
+	: never;
 
 /**
  * Pick mutable properties of `T`.
@@ -136,9 +148,11 @@ export type PickReadonlyDeep<T> = {
  * @example
  * type R1 = PickMutable<{ a: 1, readonly c: 4 }>; // { a: 1 }
  */
-export type PickMutable<T> = {
-	[P in keyof T as IsReadonlyKey<T, P> extends true ? never : P]: T[P];
-};
+export type PickMutable<T> = T extends T
+	? {
+			[P in keyof T as IsReadonlyKey<T, P> extends true ? never : P]: T[P];
+		} & {}
+	: never;
 
 /**
  * Recursively pick mutable properties of `T`.
@@ -149,8 +163,10 @@ export type PickMutable<T> = {
  * type R1 = PickMutable<Input>; // { b: { readonly c: 4, d: 5 }, e: 6 }
  * type R2 = PickMutableDeep<Input>; // { b: { d: 5 }, e: 6 }
  */
-export type PickMutableDeep<T> = {
-	[
-		P in keyof T as Not<IsReadonlyKey<T, P>> | HasType<T[P], Dict> extends false ? never : P
-	]: T[P] extends infer TP ? (TP extends Dict ? PickMutableDeep<TP> : TP) : never;
-} & {};
+export type PickMutableDeep<T> = T extends T
+	? {
+			[
+				P in keyof T as Not<IsReadonlyKey<T, P>> | HasType<T[P], Dict> extends false ? never : P
+			]: T[P] extends infer TP ? (TP extends Dict ? PickMutableDeep<TP> : TP) : never;
+		} & {}
+	: never;
