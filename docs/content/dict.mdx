@@ -2,6 +2,52 @@
 title: dict
 ---
 
+## convert
+
+### OptionalToUndefined
+
+```ts tab='Shape'
+type OptionalToUndefined<T>
+```
+
+```ts tab='Source'
+type OptionalToUndefined<T> = T extends T
+	? {
+			[P in keyof Required<T>]: T[P];
+		} & {}
+	: never;
+```
+
+Convert optional properties to required ones that can be `undefined`
+
+```ts title='Example'
+type R1 = OptionalToUndefined<{ a: 1, b?: 2 }>; // { a: 1, b: 2 | undefined }
+```
+
+### OptionalToUndefinedDeep
+
+```ts tab='Shape'
+type OptionalToUndefinedDeep<T>
+```
+
+```ts tab='Source'
+type OptionalToUndefinedDeep<T> = T extends T
+	? {
+			[P in keyof Required<T>]: T[P] extends infer TP
+				? TP extends Dict
+					? OptionalToUndefinedDeep<TP>
+					: TP
+				: never;
+		} & {}
+	: never;
+```
+
+Deeply convert optional properties to required ones that can be `undefined`.
+
+```ts title='Example'
+type R1 = OptionalToUndefinedDeep<{ a: 1, b?: { c?: 4 } }>; // { a: 1, b: { c: 4 | undefined } | undefined }
+```
+
 ## extract
 
 ### ExtractByValue
@@ -900,7 +946,7 @@ type RequiredDeep<T>
 
 ```ts tab='Source'
 type RequiredDeep<T> = {
-	[P in keyof T]-?: RequiredDeep<T[P]>;
+	[P in keyof T]-?: T[P] extends infer TP ? (TP extends Dict ? RequiredDeep<TP> : TP) : never;
 } & {};
 ```
 
@@ -914,7 +960,7 @@ type PartialDeep<T>
 
 ```ts tab='Source'
 type PartialDeep<T> = {
-	[P in keyof T]?: PartialDeep<T[P]>;
+	[P in keyof T]?: T[P] extends infer TP ? (TP extends Dict ? PartialDeep<TP> : TP) : never;
 } & {};
 ```
 
@@ -928,7 +974,11 @@ type ReadonlyDeep<T>
 
 ```ts tab='Source'
 type ReadonlyDeep<T> = {
-	readonly [P in keyof T]: ReadonlyDeep<T[P]>;
+	readonly [P in keyof T]: T[P] extends infer TP
+		? TP extends Dict
+			? ReadonlyDeep<TP>
+			: TP
+		: never;
 } & {};
 ```
 
@@ -942,7 +992,11 @@ type MutableDeep<T>
 
 ```ts tab='Source'
 type MutableDeep<T> = {
-	-readonly [P in keyof T]: MutableDeep<T[P]>;
+	-readonly [P in keyof T]: T[P] extends infer TP
+		? TP extends Dict
+			? MutableDeep<TP>
+			: TP
+		: never;
 } & {};
 ```
 
