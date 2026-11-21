@@ -110,3 +110,6 @@ type _IsReadonlyKey<T, K extends keyof T> = AreNotEqual<
 	{ [P in K]: T[P] },
 	{ -readonly [P in K]: T[P] }
 >;
+
+export type IsUnion<T> = _IsUnion<T>;
+type _IsUnion<T, C = T> = T extends T ? ([C] extends [T] ? false : true) : never;
