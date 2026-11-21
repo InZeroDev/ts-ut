@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.6.0] 2026-11-21
+
+### Added
+
+- Added dict convert utils: `OptionalToUndefined<T>` and `OptionalToUndefinedDeep<T>` which convert optional properties into required properties whose values may be undefined.
+- Added `IsUnion<T>` internal utility.
+
+### Fixed
+
+- Restrict recursion in `(Required|Partial|Mutable|Readonly)Deep<T>` to objects only, preventing unintended modifications to non-object types: `PartialDeep<string[]>` used to produce `(string | undefined)[]`.
+
 ## [0.5.0] 2026-11-15
 
 ### Added
