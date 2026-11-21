@@ -13,28 +13,28 @@ export type Mutable<T> = {
  * Makes all properties of `T` required (deep).
  */
 export type RequiredDeep<T> = {
-	[P in keyof T]-?: RequiredDeep<T[P]>;
+	[P in keyof T]-?: T[P] extends infer TP ? (TP extends Dict ? RequiredDeep<TP> : TP) : never;
 } & {};
 
 /**
  * Makes all properties of `T` optional (deep).
  */
 export type PartialDeep<T> = {
-	[P in keyof T]?: PartialDeep<T[P]>;
+	[P in keyof T]?: T[P] extends infer TP ? (TP extends Dict ? PartialDeep<TP> : TP) : never;
 } & {};
 
 /**
  * Makes all properties of `T` readonly (deep).
  */
 export type ReadonlyDeep<T> = {
-	readonly [P in keyof T]: ReadonlyDeep<T[P]>;
+	readonly [P in keyof T]: T[P] extends infer TP ? (TP extends Dict ? ReadonlyDeep<TP> : TP) : never;
 } & {};
 
 /**
  * Makes all properties of `T` mutable (deep).
  */
 export type MutableDeep<T> = {
-	-readonly [P in keyof T]: MutableDeep<T[P]>;
+	-readonly [P in keyof T]: T[P] extends infer TP ? (TP extends Dict ? MutableDeep<TP> : TP) : never;
 } & {};
 
 /**
