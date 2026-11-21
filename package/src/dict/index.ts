@@ -1,3 +1,4 @@
+export * from "./convert";
 export * from "./extract";
 export * from "./get";
 export * from "./keyof";
