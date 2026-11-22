@@ -24,6 +24,34 @@ export type Known<T> = T extends T
 	: never;
 
 /**
+ * Recursively removes the index signature from nested objects.
+ *
+ * @example
+ * type A = {
+ * 	a: 1;
+ * 	b: {
+ * 		c: 4;
+ * 		[x: string]: number;
+ * 	};
+ * 	d: {
+ * 		ak: 47;
+ * 		[x: string]: number;
+ * 	};
+ * };
+ * type A1 = Known<A>; // A
+ * type A2 = KnownDeep<A>; // { a: 1, b: { c: 4 }, d: { ak: 47 } }
+ */
+export type KnownDeep<T> = T extends T
+	? {
+			[P in keyof T as HasType<DictKey, P> extends true ? never : P]: T[P] extends infer TP
+				? TP extends Dict
+					? KnownDeep<TP>
+					: TP
+				: never;
+		}
+	: never;
+
+/**
  * Generates a type that suggests a pre-defined list of dictionary keys while accepting any other string or number.
  */
 export type SuggestKey<T, S extends boolean = false> =
