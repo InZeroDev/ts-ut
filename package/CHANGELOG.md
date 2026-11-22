@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0] 2026-11-21
+
+### Added
+
+- Added internal utils: `SplitDeepKey` and `UnionToIntersection`.
+- Added a deep version for `Known` called `KnownDeep`.
+- Added `PickDeep` and `OmitDeep` dict utils.
+
 ## [0.6.0] 2026-11-21
 
 ### Added
