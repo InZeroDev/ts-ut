@@ -1,4 +1,4 @@
-import type { DictKey, Keys, Mutable, SetDeep } from "./dict";
+import type { DictKey, Keys, Mutable, PrettifyDeep, SetDeep } from "./dict";
 import type { List, ROList } from "./list";
 import type { Decrement, Increment, ToNumber } from "./number";
 import type { AreEqual, AreNotEqual, IsAny, IsNever, IsSubtype, IsUnknown } from "./other";
@@ -113,3 +113,12 @@ type _IsReadonlyKey<T, K extends keyof T> = AreNotEqual<
 
 export type IsUnion<T> = _IsUnion<T>;
 type _IsUnion<T, C = T> = T extends T ? ([C] extends [T] ? false : true) : never;
+
+export type SplitDeepKey<K extends string | number> =
+	Stringify<K> extends `${infer H extends string}.${infer R extends string}` ? [H, R] : [K, never];
+
+export type UnionToIntersection<U> = (U extends unknown ? (arg: U) => void : never) extends (
+	arg: infer I,
+) => void
+	? I
+	: never;
