@@ -974,11 +974,7 @@ type ReadonlyDeep<T>
 
 ```ts tab='Source'
 type ReadonlyDeep<T> = {
-	readonly [P in keyof T]: T[P] extends infer TP
-		? TP extends Dict
-			? ReadonlyDeep<TP>
-			: TP
-		: never;
+	readonly [P in keyof T]: T[P] extends infer TP ? (TP extends Dict ? ReadonlyDeep<TP> : TP) : never;
 } & {};
 ```
 
@@ -992,11 +988,7 @@ type MutableDeep<T>
 
 ```ts tab='Source'
 type MutableDeep<T> = {
-	-readonly [P in keyof T]: T[P] extends infer TP
-		? TP extends Dict
-			? MutableDeep<TP>
-			: TP
-		: never;
+	-readonly [P in keyof T]: T[P] extends infer TP ? (TP extends Dict ? MutableDeep<TP> : TP) : never;
 } & {};
 ```
 
@@ -1067,6 +1059,59 @@ type MutableKey<T, K extends Keys<Known<T>>> = Prettify<
 Makes a property of `T` mutable.
 
 ## pick
+
+### PickDeep
+
+```ts tab='Shape'
+type PickDeep<T, K extends SuggestKey<KeysDeep<Known<T>>>>
+```
+
+```ts tab='Source'
+type PickDeep<T, K extends SuggestKey<KeysDeep<Known<T>>>> = T extends T
+	? PrettifyDeep<
+			UnionToIntersection<
+				K extends string | number
+					? SplitDeepKey<K> extends [infer H extends string, infer R]
+						? {
+								[
+									P in keyof T as HasType<DictKey, P> extends true ? H : P extends H ? P : never
+								]: IsNever<R> extends true ? T[P] : PickDeep<T[P], R & DictKey>;
+							}
+						: never
+					: never
+			>
+		>
+	: never;
+```
+
+Pick deeply nested properties using dot-separated paths.
+
+```ts title='Example'
+type Input = { a: 1, b: { c: 4, cc: 500 }, e: { door: { f: 5, ff: true } } };
+
+type Result = PickDeep<Input, "a" | "b.c" | "e.door.ff">; // { a: 1, b: { c: 4 }, e: { doo: { ff: true } } }
+```
+
+### OmitDeep
+
+```ts tab='Shape'
+type OmitDeep<T, K extends SuggestKey<KeysDeep<Known<T>>>>
+```
+
+```ts tab='Source'
+type OmitDeep<T, K extends SuggestKey<KeysDeep<Known<T>>>> = PickDeep<
+	T,
+	Filter<KeysDeep<T>, Stringify<K>>
+>;
+```
+
+Omit deeply nested properties using dot-separated paths
+
+```ts title='Example'
+type Input = { a: 1, b: { c: 4, cc: 500 }, e: { door: { f: 5, ff: true } } };
+
+type Result = OmitDeep<Input, "a" | "b.c" | "e.door.ff">; // { b: { cc: 500 }, e: { doo: { f: 5 } } }
+```
 
 ### LoosePick
 
@@ -1503,6 +1548,42 @@ Removes the index signature from an object.
 ```ts title='Example'
 type Config = { foo: string, bar: boolean, [x: string]: string };
 type KnownConfig = Known<Config>; // { foo: string, bar: boolean }
+```
+
+### KnownDeep
+
+```ts tab='Shape'
+type KnownDeep<T>
+```
+
+```ts tab='Source'
+type KnownDeep<T> = T extends T
+	? {
+			[P in keyof T as HasType<DictKey, P> extends true ? never : P]: T[P] extends infer TP
+				? TP extends Dict
+					? KnownDeep<TP>
+					: TP
+				: never;
+		}
+	: never;
+```
+
+Recursively removes the index signature from nested objects.
+
+```ts title='Example'
+type A = {
+	a: 1;
+	b: {
+		c: 4;
+		[x: string]: number;
+	};
+	d: {
+		ak: 47;
+		[x: string]: number;
+	};
+};
+type A1 = Known<A>; // A
+type A2 = KnownDeep<A>; // { a: 1, b: { c: 4 }, d: { ak: 47 } }
 ```
 
 ### SuggestKey
