@@ -163,10 +163,26 @@ type Range
 type Range = [start: number, end: number];
 ```
 
-A range type.
+A tuple representing a start and end value.
 
 ```ts title='Example'
 const ranges = elements.map<Range>((ele) => [ele.getStart(), ele.getEnd()]);
+```
+
+### RORange
+
+```ts tab='Shape'
+type RORange
+```
+
+```ts tab='Source'
+type RORange = readonly [start: number, end: number];
+```
+
+A readonly version of [Range](#range).
+
+```ts title='Example'
+function foo(range: RORange) {}
 ```
 
 ### NonNullish
