@@ -84,11 +84,13 @@ export type SetDeep<T, K extends SuggestKey<KeysDeep<Known<T>>, true>, V> = T ex
 	: never;
 
 type _SetDeep<T, N extends string, R, V> = {
-	[P in keyof T]: P extends N
-		? IsNever<R> extends true
-			? V
-			: Exclude<T[P], Dict> | SetDeep<Extract<T[P], Dict>, R & string, V>
-		: T[P];
+	[P in keyof T]: T[P] extends infer TP
+		? P extends N
+			? IsNever<R> extends true
+				? V
+				: SetDeep<TP extends Dict ? TP : {}, R & string, V>
+			: TP
+		: never;
 };
 
 // ---Internal---
