@@ -1,4 +1,7 @@
+import type { IsTuple, NormalizeIndex } from "../_internal";
+import type { Params } from "../func";
 import type { List, ROList } from "../list";
+import type { Not } from "../other";
 
 /**
  * Creates a tuple of the given length and parameter type.
@@ -53,3 +56,52 @@ export type KeyofTuple<T extends readonly unknown[]> = Exclude<keyof T, keyof an
 export type KnownTuple<T extends ROList> = T extends readonly [infer F, ...infer R]
 	? [F, ...KnownTuple<R>]
 	: [];
+
+/**
+ * Returns a section of a tuple.
+ *
+ * @remarks Negative indices are supported.
+ *
+ * @example
+ * type MyFunc = (a: string, b: number, c: boolean, d: string) => void;
+ * type Params = Parameters<MyFunc>;
+ * type NeededParams = Slice<Params, 1, -1>; // [number, boolean]
+ */
+export type Slice<T extends ROList, S extends number, E extends number = never> = T extends T
+	? _Slice<T, NormalizeIndex<S, T["length"]>, NormalizeIndex<E, T["length"]>>
+	: never;
+type _Slice<
+	T extends ROList,
+	S extends number,
+	E extends number,
+	_I extends ROList = [],
+	_P extends boolean = false,
+> = [_I["length"], [..._I, any]] extends [infer I extends number, infer N extends ROList]
+	? T extends readonly [infer F, ...infer R]
+		? I extends E
+			? []
+			: I extends S
+				? [F, ..._Slice<R, S, E, N, true>]
+				: _P extends true
+					? [F, ..._Slice<R, S, E, N, _P>]
+					: _Slice<R, S, E, N>
+		: never
+	: never;
+
+/**
+ * Removes duplicate elements from a tuple.
+ *
+ * @remarks It's better to only use it on strings and numbers.
+ *
+ * @example
+ * type R1 = UniqueTuple<["foo", "foo", "bar", 1, 1, 2]>; // ["foo", "bar", 1, 2]
+ */
+export type UniqueTuple<T extends ROList> =
+	Not<IsTuple<T>> extends true
+		? T
+		: T extends readonly [infer F, ...infer R]
+			? [F] extends [R[number]]
+				? UniqueTuple<R>
+				: [F, ...UniqueTuple<R>]
+			: [];
+
