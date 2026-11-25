@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.8.0] 2026-11-25
+
+### Added
+
+- Added tuple utils: `RORange`, `Slice` and `UniqueTuple`.
+
+### Changed
+
+- Updated `SetDeep` to override non-object parents.
+
+### Fixed
+
+- Fixed `Push` and `UnShift` to return the correct tuple shape.
+- Renamed the internal utility `NormalizeIndex` to `EnsureIndexIsInRange` and introduced a new, simpler `NormalizeIndex` that only adds the tuple length to negative indices.
+
 ## [0.7.0] 2026-11-21
 
 ### Added
