@@ -9,7 +9,7 @@ import type { AreEqual, IsAny, IsNever, IsSubtype, IsUnknown } from "./validatio
 export type Valid = any;
 
 /**
- * A range type.
+ * A tuple representing a start and end value.
  *
  * @example
  * const ranges = elements.map<Range>((ele) => [ele.getStart(), ele.getEnd()]);
