@@ -17,6 +17,14 @@ export type Valid = any;
 export type Range = [start: number, end: number];
 
 /**
+ * A readonly version of {@linkcode Range}.
+ * 
+ * @example
+ * function foo(range: RORange) {}
+ */
+export type RORange = readonly [start: number, end: number];
+
+/**
  * Removes `undefined` and `null` from a type.
  */
 export type NonNullish<T> = Exclude<T, undefined | null>;
